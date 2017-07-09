@@ -1,0 +1,107 @@
+def datastrlen:
+###############
+# r0 = offset of str in data
+# retval (r0) = strlen
+###############
+push r1
+push r2
+push r3
+movr s2, r0
+movi s1, 0
+lodr s0, s2
+cmpb s0, 0
+jpei exit
+loop:
+movi s2, 0
+addi s1, 1
+addr s2, s1
+lodr s0, s2
+cmpb s0, 0
+jpni loop
+exit:
+movr r0, s1
+poop r3
+poop r2
+poop r1
+retn
+
+def round: # round(uint16_t text[2])
+#################
+# r0 = offset of text[0] in data
+# r1 = offset of text[1] in data
+# r2 = text[0]
+# r3 = text[1]
+# retval = void
+################
+push r1
+push r2
+push r3
+lodr r2, r0 # text[0]
+lodr r3, r1 # text[1]
+movi s0, 0 # i
+movi s1, 0 # sum
+loop:
+push s0 # saving i
+# s0 and s1 will be used as tmps
+#########
+# calc v1
+#########
+movr s0, r2
+shli s0, 4
+addi s0, 0x7275 # s0 = (text[0] << 4) + k2
+movr s1, r2
+xorr s0, s1 # s0 = ((text[0] << 4) + k2) ^ text[0]
+push s0
+movr s0, r2
+shri s0, 5
+addi s0, 0x6e73 # s0 = (text[0] >> 5) + k3
+poop s1
+xorr s0, s1 # s0 = ((text[0] << 4) + k2) ^ text[0] ^ ((text[0] >> 5) + k3)
+subr r3, s0 # r3 -= s0
+#########
+# calc v0
+#########
+movr s0, r3
+shli s0, 4
+addi s0, 0x7065 # s0 = (text[1] << 4) + k0
+movr s1, r3
+xorr s0, s1 # s0 = ((text[1] << 4) + k0) ^ text[1]
+push s0
+movr s0, r3
+shri s0, 5
+addi s0, 0x7065 # s0 = (text[1] >> 5) + k1
+poop s1
+xorr s0, s1 # s0 = ((text[1] << 4) + k0) ^ text[1] ^ ((text[1] >> 5) + k1)
+subr r2, s0 # r2 -= s0
+######
+# end loop
+#####
+poop s0 # restoring i
+addi s0, 1
+cmpb s0, 127 # while (i < 128)
+jpbi loop
+# saving the values
+strr r0, r2
+strr r1, r3
+poop r3
+poop r2
+poop r1
+retn
+
+def main:
+movi r0, 0
+call datastrlen
+movr r2, r0
+movi s0, 0
+decrypt:
+push s0
+movi r0, 0
+movi r1, 2
+addr r0, s0
+addr r1, s0
+call round
+poop s0
+addi s0, 4
+cmpr s0, r2
+jpbi decrypt
+shit
