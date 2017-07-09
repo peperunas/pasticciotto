@@ -59,7 +59,7 @@ Now we are ready to embed the VM in a `.c` program:
 #include <stdlib.h>
 
 int main(int argc, char *argv[]) {
-    */
+    /*
     In order to create the bytecode for pasticciotto, you can use
     the assembler in the assembler/ directory. You can include it with
     `xxd -i example_assembled.pstc`
