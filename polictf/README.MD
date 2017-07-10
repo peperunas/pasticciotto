@@ -11,7 +11,13 @@ The challenge can be deployed by running the `create_files.sh` helper script and
 
 # Write-up
 
-The client provided to the partecipants is just the VM running the code `encrypt.pstc` in the `asms/` directory:
+The challenge has a client and a server...
+
+## What does the server say?
+When the connection to the server is instantiated, the server sends the **opcode key** used by the remote Pasticciotto VM. The next step is to send some valid bytecode to be executed remotely. But... what?
+
+## To the client and beyond!
+The client provided to the partecipants is just the Pasticciotto VM running the code [`encrypt.pstc`](./asms/encrypt.pstc) in the `asms/` directory.
 
 ```asm
 def datastrlen:
@@ -145,9 +151,10 @@ lodi r3, 6
 shit
 ```
 
-Once the VM bytecode has been reversed, the partecipant had to write a custom assembler to **decrypt the server's VM data section** using the same algorithm shown above. 
+Once the VM bytecode has been reversed, the partecipant had the knowledge to **decrypt the server's VM data section** using the same algorithm shown above. 
+This has to be done with a custom assembler (check out [`assembler.py`](../assembler/assembler.py)!) due to the **opcodes key** changing each time the partecipant connected to the server.
 
-An example of a working decryption algorithm is `decrypt.pstc` in the `asms/` directory:
+An example of a working decryption algorithm is [`decrypt.pstc`](./asms/decrypt.pstc) in the `asms/` directory:
 
 ```asm
 def datastrlen:
@@ -259,7 +266,7 @@ jpbi decrypt
 shit
 ```
 
-The python wrapper used to solve the challenge, `exploit-test.py`, can be found in the `server/` directory.
+The python wrapper used to solve the challenge, [`exploit-test.py`](./server/exploit-test.py), can be found in the `server/` directory.
 
 ```python
 from pwn import *
