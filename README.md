@@ -3,7 +3,7 @@
 # What is this?
 Pasticciotto is a virtual machine which can be used to obfuscate code. It was developed for the **PoliCTF 17** as a reversing challenge.
 
-The key feature is its **opcode "shuffling"**: their actual values are determined by a password. (More in [`IMPLEMENTATION.md`](IMPL))
+The key feature is its **opcode "shuffling"**: their actual values are determined by a password. (More in [`IMPLEMENTATION.md`](./IMPLEMENTATION.md))
 
 I wanted to experiment with VM obfuscation since it was a topic that caught my attention while reversing challenges for various CTFs. So, I decided to write one **from scratch** in order to understand better how instruction set architectures are implemented! 
 
@@ -110,7 +110,7 @@ void foo() {
 You can find the client and the server under the `polictf/` directory. I have also written a small writeup. Check it out!
 
 # Implementation details
-Check out the file [IMPLEMENTATION.MD](IMPL) to understand how the VM works and which operations it can do! Watch out for some spoilers if you haven't completed the challenge though!
+Check out the file [IMPLEMENTATION.MD](./IMPLEMENTATION.md) to understand how the VM works and which operations it can do! Watch out for some spoilers if you haven't completed the challenge though!
 
 # Contributions
 
@@ -139,4 +139,3 @@ OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 DEALINGS IN THE SOFTWARE.
 ```
 [Pasticciotto]: ./res/pasticciotto.png
-[IMPL]: ./IMPLEMENTATION.md
