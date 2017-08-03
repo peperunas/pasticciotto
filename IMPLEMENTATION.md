@@ -3,7 +3,7 @@
 Pasticciotto uses the Harvard Architecture meaning its code is separated from its data and also from its stack. This allowed me to materialize my idea for the **PoliCTF** challenge: I could run the code the partecipants assembled without any hassle!
 ![Structure]
 
-There are 8 general purpose registers (`R0` to `S3`) with `S0 -> S3` being "scratch" ones. There is a `RP` register (Return Pointer) and obviously the `IP` (Instruction Pointer).
+There are 8 general purpose registers (`R0` to `S3`) with `S0 -> S3` being "scratch" ones. There is a `RP` register (Return Pointer), the `SP` register (Stack Pointer) and obviously the `IP` (Instruction Pointer).
 
 Every instruction varies from `2` to `4` bytes long: the opcode has a fixed size (`1` byte).
 
