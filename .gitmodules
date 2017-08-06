@@ -1,0 +1,3 @@
+[submodule "binaryninja-pasticciotto"]
+	path = binaryninja-pasticciotto
+	url = https://github.com/peperunas/binaryninja-pasticciotto
