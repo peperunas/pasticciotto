@@ -10,6 +10,7 @@ VMAddrSpace::VMAddrSpace() {
     stacksize = DEFAULT_STACKSIZE;
     codesize = DEFAULT_CODESIZE;
     datasize = DEFAULT_DATASIZE;
+    allocate();
     return;
 }
 
@@ -20,6 +21,7 @@ VMAddrSpace::VMAddrSpace(uint32_t ss, uint32_t cs, uint32_t ds) {
     stacksize = ss;
     codesize = cs;
     datasize = ds;
+    allocate();
     return;
 }
 

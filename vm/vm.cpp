@@ -104,16 +104,13 @@ CONSTRUCTORS
 */
 VM::VM(uint8_t *key) {
     DBG_SUCC(("Creating VM without code.\n"));
-    as.allocate();
     initVariables();
     encryptOpcodes(key);
 }
 
 VM::VM(uint8_t *key, uint8_t *code, uint32_t codesize) {
     DBG_SUCC(("Creating VM with code.\n"));
-    if (as.allocate()) {
-        as.insCode(code, codesize);
-    }
+    as.insCode(code, codesize);
     initVariables();
     encryptOpcodes(key);
 }
