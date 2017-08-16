@@ -622,6 +622,9 @@ bool VM::execPUSH(void) {
 
     src = as.code[regs[IP] + 1];
     DBG_INFO(("PUSH %s\n", getRegName(src)));
+    if (!isRegValid(src)) {
+        return false;
+    }
     if (regs[SP] + sizeof(uint16_t) > 0xffff) {
         DBG_ERROR(("Out of bound: stack is going above 0xFFFF!\n"));
         return false;
@@ -636,6 +639,9 @@ bool VM::execPOOP(void) {
 
     dst = as.code[regs[IP] + 1];
     DBG_INFO(("POOP %s\n", getRegName(dst)));
+    if (!isRegValid(dst)) {
+        return false;
+    }
     if (regs[SP] - sizeof(uint16_t) < 0) {
         DBG_ERROR(("Out of bound: stack is going below 0!\n"));
         return false;
@@ -655,6 +661,9 @@ bool VM::execCMPB(void) {
     reg = as.code[regs[IP] + 1];
     imm = as.code[regs[IP] + 2];
     DBG_INFO(("CMPB %s, 0x%x\n", getRegName(reg), imm));
+    if (!isRegValid(reg)) {
+        return false;
+    }
     if (*((uint8_t *) &regs[reg]) == imm) {
         flags.ZF = 1;
     } else {
@@ -678,6 +687,9 @@ bool VM::execCMPW(void) {
     reg = as.code[regs[IP] + 1];
     imm = *((uint16_t *) &as.code[regs[IP] + 2]);
     DBG_INFO(("CMPW %s, 0x%x\n", getRegName(reg), imm));
+    if (!isRegValid(reg)) {
+        return false;
+    }
     if (regs[reg] == imm) {
         flags.ZF = 1;
     } else {
@@ -701,6 +713,9 @@ bool VM::execCMPR(void) {
     r1 = as.code[regs[IP] + 1] >> 4;
     r2 = as.code[regs[IP] + 1] & 0b00001111;
     DBG_INFO(("CMPR %s, %s\n", getRegName(r1), getRegName(r2)));
+    if (!isRegValid(r1) || !isRegValid(r2)) {
+        return false;
+    }
     if (regs[r1] == regs[r2]) {
         flags.ZF = 1;
     } else {
@@ -734,6 +749,9 @@ bool VM::execJMPR(void) {
 
     reg = as.code[regs[IP] + 1];
     DBG_INFO(("JMPR %s = 0x%x\n", getRegName(reg), regs[reg]));
+    if (!isRegValid(reg)) {
+        return false;
+    }
     regs[IP] = regs[reg];
     return true;
 }
@@ -761,6 +779,9 @@ bool VM::execJPAR(void) {
 
     reg = as.code[regs[IP] + 1];
     DBG_INFO(("JPAR %s = 0x%x\n", getRegName(reg), regs[reg]));
+    if (!isRegValid(reg)) {
+        return false;
+    }
     if (flags.CF == 0 && flags.ZF == 0) {
         regs[IP] = reg;
         return true;
@@ -791,6 +812,9 @@ bool VM::execJPBR(void) {
 
     reg = as.code[regs[IP] + 1];
     DBG_INFO(("JPBR %s = 0x%x\n", getRegName(reg), regs[reg]));
+    if (!isRegValid(reg)) {
+        return false;
+    }
     if (flags.CF == 1) {
         regs[IP] = reg;
         return true;
@@ -821,6 +845,9 @@ bool VM::execJPER(void) {
 
     reg = as.code[regs[IP] + 1];
     DBG_INFO(("JPER %s = 0x%x\n", getRegName(reg), regs[reg]));
+    if (!isRegValid(reg)) {
+        return false;
+    }
     if (flags.ZF == 1) {
         regs[IP] = reg;
         return true;
@@ -851,6 +878,9 @@ bool VM::execJPNR(void) {
 
     reg = as.code[regs[IP] + 1];
     DBG_INFO(("JPNR %s = 0x%x\n", getRegName(reg), regs[reg]));
+    if (!isRegValid(reg)) {
+        return false;
+    }
     if (flags.ZF == 0) {
         regs[IP] = reg;
         return true;
