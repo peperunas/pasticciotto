@@ -269,7 +269,7 @@ bool VM::execADDR(void) {
 
     dst = as.code[regs[IP] + 1] >> 4;
     src = as.code[regs[IP] + 1] & 0b00001111;
-    DBG_INFO(("ADDR %s, 0x%x\n", getRegName(dst), src));
+    DBG_INFO(("ADDR %s, %s\n", getRegName(dst), getRegName(src)));
     if (!isRegValid(src) || !isRegValid(dst)) {
         return false;
     }
@@ -303,7 +303,7 @@ bool VM::execSUBR(void) {
 
     dst = as.code[regs[IP] + 1] >> 4;
     src = as.code[regs[IP] + 1] & 0b00001111;
-    DBG_INFO(("SUBR %s, 0x%x\n", getRegName(dst), src));
+    DBG_INFO(("SUBR %s, %s\n", getRegName(dst), getRegName(src)));
     if (!isRegValid(src) || !isRegValid(dst)) {
         return false;
     }
@@ -354,7 +354,7 @@ bool VM::execANDR(void) {
 
     dst = as.code[regs[IP] + 1] >> 4;
     src = as.code[regs[IP] + 1] & 0b00001111;
-    DBG_INFO(("ANDR %s, 0x%x\n", getRegName(dst), src));
+    DBG_INFO(("ANDR %s, %s\n", getRegName(dst), getRegName(src)));
     if (!isRegValid(src) || !isRegValid(dst)) {
         return false;
     }
@@ -405,7 +405,7 @@ bool VM::execYORR(void) {
 
     dst = as.code[regs[IP] + 1] >> 4;
     src = as.code[regs[IP] + 1] & 0b00001111;
-    DBG_INFO(("XORR %s, 0x%x\n", getRegName(dst), src));
+    DBG_INFO(("XORR %s, %s\n", getRegName(dst), getRegName(src)));
     if (!isRegValid(src) || !isRegValid(dst)) {
         return false;
     }
@@ -456,7 +456,7 @@ bool VM::execXORR(void) {
 
     dst = as.code[regs[IP] + 1] >> 4;
     src = as.code[regs[IP] + 1] & 0b00001111;
-    DBG_INFO(("XORR %s, 0x%x\n", getRegName(dst), src));
+    DBG_INFO(("XORR %s, %s\n", getRegName(dst), getRegName(src)));
     if (!isRegValid(src) || !isRegValid(dst)) {
         return false;
     }
@@ -473,7 +473,7 @@ bool VM::execNOTR(void) {
 
     dst = as.code[regs[IP] + 1] >> 4;
     src = as.code[regs[IP] + 1] & 0b00001111;
-    DBG_INFO(("NOTR %s, 0x%x\n", getRegName(dst), src));
+    DBG_INFO(("NOTR %s, %s\n", getRegName(dst), getRegName(src)));
     if (!isRegValid(src) || !isRegValid(dst)) {
         return false;
     }
@@ -507,7 +507,7 @@ bool VM::execMULR(void) {
 
     dst = as.code[regs[IP] + 1] >> 4;
     src = as.code[regs[IP] + 1] & 0b00001111;
-    DBG_INFO(("MULR %s, 0x%x\n", getRegName(dst), src));
+    DBG_INFO(("MULR %s, %s\n", getRegName(dst), getRegName(src)));
     if (!isRegValid(src) || !isRegValid(dst)) {
         return false;
     }
@@ -575,7 +575,7 @@ bool VM::execSHLR(void) {
 
     dst = as.code[regs[IP] + 1] >> 4;
     src = as.code[regs[IP] + 1] & 0b00001111;
-    DBG_INFO(("SHLR %s, 0x%x\n", getRegName(dst), src));
+    DBG_INFO(("SHLR %s, %s\n", getRegName(dst), getRegName(src)));
     if (!isRegValid(src) || !isRegValid(dst)) {
         return false;
     }
@@ -609,7 +609,7 @@ bool VM::execSHRR(void) {
 
     dst = as.code[regs[IP] + 1] >> 4;
     src = as.code[regs[IP] + 1] & 0b00001111;
-    DBG_INFO(("SHRR %s, 0x%x\n", getRegName(dst), src));
+    DBG_INFO(("SHRR %s, %s\n", getRegName(dst), getRegName(src)));
     if (!isRegValid(src) || !isRegValid(dst)) {
         return false;
     }
