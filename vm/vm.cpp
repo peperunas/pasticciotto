@@ -641,8 +641,9 @@ bool VM::execPUSH(void) {
     if (!isRegValid(reg)) {
         return false;
     }
-    if (regs[SP] + sizeof(uint16_t) > 0xffff) {
-        DBG_ERROR(("Out of bound: stack is going above 0xFFFF!\n"));
+    if (regs[SP] + sizeof(uint16_t) >= as.getStacksize()) {
+        DBG_ERROR(("Out of bound: stack is going over the stack size!\n"));
+        status();
         return false;
     }
     memcpy(&as.stack[regs[SP]], &regs[reg], sizeof(uint16_t));
