@@ -116,7 +116,7 @@ VM::VM(uint8_t *key, uint8_t *code, uint32_t codesize) {
 }
 
 void VM::initVariables(void) {
-    uint32_t i;
+    uint8_t i;
 
     for (i = R0; i < NUM_REGS; i++) {
         this->regs[i] = 0;
