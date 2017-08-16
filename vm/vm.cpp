@@ -39,49 +39,35 @@ void VM::encryptOpcodes(uint8_t *key) {
 DBG UTILS
 */
 
-uint8_t *VM::getRegName(uint8_t regvalue) {
-    uint8_t *buf = new uint8_t[2];
+const char *VM::getRegName(uint8_t regvalue) {
 #ifdef DBG
     switch (regvalue) {
     case R0:
-      memcpy(buf, "R0", 2);
-      break;
+      return "R0";
     case R1:
-      memcpy(buf, "R1", 2);
-      break;
+     return "R1";
     case R2:
-      memcpy(buf, "R2", 2);
-      break;
+     return "R2";
     case R3:
-      memcpy(buf, "R3", 2);
-      break;
+     return "R3";
     case S0:
-      memcpy(buf, "S0", 2);
-      break;
+     return "S0";
     case S1:
-      memcpy(buf, "S1", 2);
-      break;
+     return "S1";
     case S2:
-      memcpy(buf, "S2", 2);
-      break;
+     return "S2";
     case S3:
-      memcpy(buf, "S3", 2);
-      break;
+     return "S3";
     case IP:
-      memcpy(buf, "IP", 2);
-      break;
+     return "IP";
     case RP:
-      memcpy(buf, "RP", 2);
-      break;
+     return "RP";
     case SP:
-      memcpy(buf, "SP", 2);
-      break;
+     return "SP";
     default:
-      memcpy(buf, "??", 2);
-      break;
+     return "??";
     }
 #endif
-    return buf;
 }
 
 void VM::status(void) {
