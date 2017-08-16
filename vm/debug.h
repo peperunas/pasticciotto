@@ -1,5 +1,6 @@
 #ifndef DBG_H
 #define DBG_H
+
 #include <stdio.h>
 
 #if DBG
