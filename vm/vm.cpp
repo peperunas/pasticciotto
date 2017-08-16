@@ -974,7 +974,7 @@ bool VM::execRETN(void) {
 bool VM::execGRMN(void) {
     uint8_t i;
     for (i = 0; i < NUM_REGS; i++) {
-        if (i != IP && i != RP) {
+        if (i != IP && i != RP && i != SP) {
             regs[i] = 0x4747;
         }
     }
