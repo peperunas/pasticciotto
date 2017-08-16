@@ -642,8 +642,7 @@ bool VM::execPUSH(void) {
         return false;
     }
     if (regs[SP] + sizeof(uint16_t) >= as.getStacksize()) {
-        DBG_ERROR(("Out of bound: stack is going over the stack size!\n"));
-        status();
+        DBG_ERROR(("Out of bounds: stack is going over the stack size!\n"));
         return false;
     }
     memcpy(&as.stack[regs[SP]], &regs[reg], sizeof(uint16_t));
@@ -662,7 +661,7 @@ bool VM::execPOOP(void) {
         return false;
     }
     if (regs[SP] - sizeof(uint16_t) < 0) {
-        DBG_ERROR(("Out of bound: stack is going below 0!\n"));
+        DBG_ERROR(("Out of bounds: stack is going below 0!\n"));
         return false;
     }
     regs[SP] -= sizeof(uint16_t);
@@ -948,10 +947,15 @@ bool VM::execCALL(void) {
     }
     DBG_INFO(("CALL 0x%x\n", dst));
     if (regs[SP] + sizeof(uint16_t) >= as.getStacksize()) {
-        DBG_ERROR(("Out of bound: stack is going over the stack size!\n"));
+        DBG_ERROR(("Out of bounds: stack is going over the stack size!\n"));
         return false;
     }
-    *((uint16_t *) &as.stack[regs[SP]]) = regs[IP] + 3;
+    if (regs[IP] + 1 + sizeof(dst) >= as.getCodesize()) {
+        DBG_ERROR(("Out of bounds: trying to read over codesize.\n"));
+        return false;
+    }
+    regs[RP] = regs[IP] + 1 + sizeof(dst);
+    *((uint16_t *) &as.stack[regs[SP]]) = regs[RP];
     regs[SP] += sizeof(uint16_t);
     regs[IP] = dst;
     return true;
@@ -962,11 +966,10 @@ bool VM::execRETN(void) {
     RETN -> IP = RP , restores saved return IP
     */
     if (regs[SP] - sizeof(uint16_t) < 0) {
-        DBG_ERROR(("Out of bound: stack is going below 0!\n"));
+        DBG_ERROR(("Out of bounds: stack is going below 0!\n"));
         return false;
     }
     regs[SP] -= sizeof(uint16_t);
-    regs[RP] = *((uint16_t *) &as.stack[regs[SP]]);
     DBG_INFO(("RETN 0x%x\n", regs[RP]));
     regs[IP] = regs[RP];
     return true;
