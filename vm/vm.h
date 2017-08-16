@@ -23,6 +23,14 @@ private:
 
     bool isRegValid(uint8_t reg);
 
+    template <typename T>
+    bool isDivArgValid(T arg) {
+        if (arg == 0) {
+            return false;
+        }
+        return true;
+    }
+
     /*
     DBG UTILS
     */

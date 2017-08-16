@@ -525,7 +525,7 @@ bool VM::execDIVI(void) {
     dst = as.code[regs[IP] + 1];
     src = *((uint16_t *) &as.code[regs[IP] + 2]);
     DBG_INFO(("DIVI %s, 0x%x\n", getRegName(dst), src));
-    if (!isRegValid(dst)) {
+    if (!isRegValid(dst) || !isDivArgValid<uint16_t>(src)) {
         return false;
     }
     regs[dst] /= src;
@@ -541,8 +541,8 @@ bool VM::execDIVR(void) {
 
     dst = as.code[regs[IP] + 1] >> 4;
     src = as.code[regs[IP] + 1] & 0b00001111;
-    DBG_INFO(("DIVR %s, 0x%x\n", getRegName(dst), src));
-    if (!isRegValid(src) || !isRegValid(dst)) {
+    DBG_INFO(("DIVR %s, %s\n", getRegName(dst), getRegName(src)));
+    if (!isRegValid(src) || !isRegValid(dst) || !isDivArgValid<uint8_t>(regs[src])) {
         return false;
     }
     regs[dst] /= regs[src];
