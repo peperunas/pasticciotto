@@ -346,7 +346,7 @@ bool VM::execANDW(void) {
     if (!as.getArgs(regs[IP], &src, &dst)) {
         return false;
     }
-    DBG_INFO(("XORW %s, 0x%x\n", getRegName(dst), src));
+    DBG_INFO(("ANDW %s, 0x%x\n", getRegName(dst), src));
     if (!isRegValid(dst)) {
         return false;
     }
@@ -398,7 +398,7 @@ bool VM::execYORW(void) {
     if (!as.getArgs(regs[IP], &src, &dst)) {
         return false;
     }
-    DBG_INFO(("XORW %s, 0x%x\n", getRegName(dst), src));
+    DBG_INFO(("YORW %s, 0x%x\n", getRegName(dst), src));
     if (!isRegValid(dst)) {
         return false;
     }
@@ -416,7 +416,7 @@ bool VM::execYORR(void) {
     if (!as.getArgs(regs[IP], &src, &dst)) {
         return false;
     }
-    DBG_INFO(("XORR %s, %s\n", getRegName(dst), getRegName(src)));
+    DBG_INFO(("YORR %s, %s\n", getRegName(dst), getRegName(src)));
     if (!isRegValid(src) || !isRegValid(dst)) {
         return false;
     }
@@ -503,7 +503,7 @@ bool VM::execMULI(void) {
     if (!as.getArgs(regs[IP], &src, &dst)) {
         return false;
     }
-    DBG_INFO(("SUBI %s, 0x%x\n", getRegName(dst), src));
+    DBG_INFO(("MULI %s, 0x%x\n", getRegName(dst), src));
     if (!isRegValid(dst)) {
         return false;
     }
