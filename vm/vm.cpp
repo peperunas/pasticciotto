@@ -192,6 +192,10 @@ bool VM::execLODI(void) {
     if (!isRegValid(dst)) {
         return false;
     }
+    if (src < 0 || src + sizeof(uint16_t) >= as.getDatasize()) {
+        DBG_ERROR(("Out of bounds: trying to access to invalid data address.\n"));
+        return false;
+    }
     regs[dst] = *((uint16_t *) &as.data[src]);
     return true;
 }
@@ -207,6 +211,10 @@ bool VM::execLODR(void) {
     }
     DBG_INFO(("LODR %s, %s\n", getRegName(dst), getRegName(src)));
     if (!isRegValid(src) || !isRegValid(dst)) {
+        return false;
+    }
+    if (regs[src] < 0 || regs[src] + sizeof(uint16_t) >= as.getDatasize()) {
+        DBG_ERROR(("Out of bounds: trying to access to invalid data address.\n"));
         return false;
     }
     regs[dst] = *((uint16_t *) &as.data[regs[src]]);
@@ -226,6 +234,10 @@ bool VM::execSTRI(void) {
     if (!isRegValid(dst)) {
         return false;
     }
+    if (dst < 0 || dst + sizeof(uint16_t) >= as.getDatasize()) {
+        DBG_ERROR(("Out of bounds: trying to access to invalid data address.\n"));
+        return false;
+    }
     *((uint16_t *) &as.data[dst]) = regs[src];
     return true;
 }
@@ -241,6 +253,10 @@ bool VM::execSTRR(void) {
     }
     DBG_INFO(("STRR %s, %s\n", getRegName(dst), getRegName(src)));
     if (!isRegValid(src) || !isRegValid(dst)) {
+        return false;
+    }
+    if (regs[dst] < 0 || regs[dst] + sizeof(uint16_t) >= as.getDatasize()) {
+        DBG_ERROR(("Out of bounds: trying to access to invalid data address.\n"));
         return false;
     }
     *((uint16_t *) &as.data[regs[dst]]) = regs[src];
