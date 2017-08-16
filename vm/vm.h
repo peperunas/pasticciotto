@@ -34,7 +34,7 @@ private:
     /*
     DBG UTILS
     */
-    uint8_t *getRegName(uint8_t);
+    const char *getRegName(uint8_t);
 
     /*
     IMPLEMENTATIONS
