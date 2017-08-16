@@ -70,6 +70,10 @@ bool VMAddrSpace::allocate(void) {
 
 bool VMAddrSpace::insCode(uint8_t *buf, uint32_t size) {
     if (code) {
+        if (size > codesize) {
+            DBG_ERROR(("The injected code size is too big!\n"));
+            return false;
+        }
         DBG_INFO(("Copying buffer into code section.\n"));
         memcpy(code, buf, size);
     } else {
@@ -81,6 +85,10 @@ bool VMAddrSpace::insCode(uint8_t *buf, uint32_t size) {
 
 bool VMAddrSpace::insStack(uint8_t *buf, uint32_t size) {
     if (stack) {
+        if (size > stacksize) {
+            DBG_ERROR(("The injected stack size is too big!\n"));
+            return false;
+        }
         DBG_INFO(("Copying buffer into stack section.\n"));
         memcpy(stack, buf, size);
     } else {
@@ -91,7 +99,11 @@ bool VMAddrSpace::insStack(uint8_t *buf, uint32_t size) {
 }
 
 bool VMAddrSpace::insData(uint8_t *buf, uint32_t size) {
-    if (this->code) {
+    if (data) {
+        if (size > datasize) {
+            DBG_ERROR(("The injected data size is too big!\n"));
+            return false;
+        }
         DBG_INFO(("Copying buffer into data section.\n"));
         memcpy(data, buf, size);
     } else {
