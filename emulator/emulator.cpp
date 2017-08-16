@@ -16,6 +16,10 @@ int main(int argc, char *argv[]) {
     reading bytecode
     */
     bytecode_if.open(argv[2], std::ios::binary | std::ios::ate);
+    if (!bytecode_if.good()) {
+        printf("File is not valid.\n");
+        return -1;
+    }
     bytecode_size = bytecode_if.tellg();
     bytecode_if.seekg(0, std::ios::beg);
 
