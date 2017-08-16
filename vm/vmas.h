@@ -11,6 +11,12 @@
 class VMAddrSpace {
 private:
     uint32_t stacksize, codesize, datasize;
+public:
+    uint32_t getStacksize() const;
+
+    uint32_t getCodesize() const;
+
+    uint32_t getDatasize() const;
 
 public:
     VMAddrSpace();

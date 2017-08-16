@@ -946,16 +946,24 @@ bool VM::execCALL(void) {
         return false;
     }
     DBG_INFO(("CALL 0x%x\n", dst));
+    if (regs[SP] + sizeof(uint16_t) >= as.getStacksize()) {
+        DBG_ERROR(("Out of bound: stack is going over the stack size!\n"));
+        return false;
+    }
     *((uint16_t *) &as.stack[regs[SP]]) = regs[IP] + 3;
     regs[SP] += sizeof(uint16_t);
     regs[IP] = dst;
-    return false;
+    return true;
 }
 
 bool VM::execRETN(void) {
     /*
     RETN -> IP = RP , restores saved return IP
     */
+    if (regs[SP] - sizeof(uint16_t) < 0) {
+        DBG_ERROR(("Out of bound: stack is going below 0!\n"));
+        return false;
+    }
     regs[SP] -= sizeof(uint16_t);
     regs[RP] = *((uint16_t *) &as.stack[regs[SP]]);
     DBG_INFO(("RETN 0x%x\n", regs[RP]));
@@ -1284,10 +1292,13 @@ void VM::run(void) {
                 finished = true;
             }
         } else if (opcode == OPS[CALL]) {
-            execCALL();
+            if (!execCALL()) {
+                finished = true;
+            }
         } else if (opcode == OPS[RETN]) {
-            execRETN();
-            regs[IP] = regs[RP];
+            if (!execRETN()) {
+                finished = true;
+            }
         } else if (opcode == OPS[GRMN]) {
             execGRMN();
             regs[IP] += GRMN_SIZE;
