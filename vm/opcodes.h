@@ -114,7 +114,6 @@ INSTRUCTION SIZE TYPES
 */
 #define REG2REG 2
 #define IMM2REG 4
-#define REG2IMM 4
 #define BYT2REG 3
 #define REGONLY 2
 #define IMMONLY 3

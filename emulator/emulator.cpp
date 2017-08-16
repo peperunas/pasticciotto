@@ -1,9 +1,6 @@
 #include "../vm/debug.h"
 #include "../vm/vm.h"
 #include <fstream>
-#include <stdint.h>
-#include <stdio.h>
-#include <stdlib.h>
 
 int main(int argc, char *argv[]) {
   std::ifstream bytecode_if;
@@ -24,7 +21,6 @@ int main(int argc, char *argv[]) {
 
   bytecode = new uint8_t[bytecode_size];
   bytecode_if.read((char *)bytecode, bytecode_size);
-  printf("SIZE READ: %d\n", bytecode_size);
   VM vm((uint8_t *)argv[1], bytecode, bytecode_size);
   vm.run();
   return 0;

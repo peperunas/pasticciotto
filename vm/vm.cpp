@@ -1,9 +1,7 @@
 #include "vm.h"
 #include "debug.h"
 #include "opcodes.h"
-#include "vmas.h"
 #include <string.h>
-#include <unistd.h>
 
 void VM::encryptOpcodes(uint8_t *key) {
   uint8_t arr[256];

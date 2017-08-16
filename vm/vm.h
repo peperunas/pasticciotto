@@ -28,7 +28,6 @@ private:
   */
   bool execMOVI(void);
   bool execMOVR(void);
-  bool execMOVM(void);
   bool execLODI(void);
   bool execLODR(void);
   bool execSTRI(void);
