@@ -525,7 +525,7 @@ bool VM::execDIVI(void) {
     dst = as.code[regs[IP] + 1];
     src = *((uint16_t *) &as.code[regs[IP] + 2]);
     DBG_INFO(("DIVI %s, 0x%x\n", getRegName(dst), src));
-    if (!isRegValid(dst)) {
+    if (!isRegValid(dst) || !isDivArgValid<uint16_t>(src)) {
         return false;
     }
     regs[dst] /= src;
@@ -541,8 +541,8 @@ bool VM::execDIVR(void) {
 
     dst = as.code[regs[IP] + 1] >> 4;
     src = as.code[regs[IP] + 1] & 0b00001111;
-    DBG_INFO(("DIVR %s, 0x%x\n", getRegName(dst), src));
-    if (!isRegValid(src) || !isRegValid(dst)) {
+    DBG_INFO(("DIVR %s, %s\n", getRegName(dst), getRegName(src)));
+    if (!isRegValid(src) || !isRegValid(dst) || !isDivArgValid<uint8_t>(regs[src])) {
         return false;
     }
     regs[dst] /= regs[src];
@@ -766,9 +766,10 @@ bool VM::execJPAI(void) {
     DBG_INFO(("JPAI 0x%x\n", imm));
     if (flags.CF == 0 && flags.ZF == 0) {
         regs[IP] = imm;
-        return true;
+    } else {
+        regs[IP] += JPAI_SIZE;
     }
-    return false;
+    return true;
 }
 
 bool VM::execJPAR(void) {
@@ -784,9 +785,9 @@ bool VM::execJPAR(void) {
     }
     if (flags.CF == 0 && flags.ZF == 0) {
         regs[IP] = reg;
-        return true;
+    } else {
+        regs[IP] += JPAR_SIZE;
     }
-    regs[IP] += JPAR_SIZE;
     return true;
 }
 
@@ -800,9 +801,9 @@ bool VM::execJPBI(void) {
     DBG_INFO(("JPBI 0x%x\n", imm));
     if (flags.CF == 1) {
         regs[IP] = imm;
-        return true;
+    } else {
+        regs[IP] += JPBI_SIZE;
     }
-    regs[IP] += JPBI_SIZE;
     return true;
 }
 
@@ -819,9 +820,9 @@ bool VM::execJPBR(void) {
     }
     if (flags.CF == 1) {
         regs[IP] = reg;
-        return true;
+    } else {
+        regs[IP] += JPBR_SIZE;
     }
-    regs[IP] += JPBR_SIZE;
     return true;
 }
 
@@ -835,9 +836,9 @@ bool VM::execJPEI(void) {
     DBG_INFO(("JPEI 0x%x\n", imm));
     if (flags.ZF == 1) {
         regs[IP] = imm;
-        return true;
+    } else {
+        regs[IP] += JPEI_SIZE;
     }
-    regs[IP] += JPEI_SIZE;
     return true;
 }
 
@@ -854,10 +855,10 @@ bool VM::execJPER(void) {
     }
     if (flags.ZF == 1) {
         regs[IP] = reg;
-        return true;
+    } else {
+        regs[IP] += JPER_SIZE;
     }
-    regs[IP] += JPER_SIZE;
-    return false;
+    return true;
 }
 
 bool VM::execJPNI(void) {
@@ -870,9 +871,10 @@ bool VM::execJPNI(void) {
     DBG_INFO(("JPNI 0x%x\n", imm));
     if (flags.ZF == 0) {
         regs[IP] = imm;
-        return true;
+    } else {
+        regs[IP] += JPNI_SIZE;
     }
-    return false;
+    return true;
 }
 
 bool VM::execJPNR(void) {
@@ -888,9 +890,10 @@ bool VM::execJPNR(void) {
     }
     if (flags.ZF == 0) {
         regs[IP] = reg;
-        return true;
+    } else {
+        regs[IP] += JPNR_SIZE;
     }
-    return false;
+    return true;
 }
 
 bool VM::execCALL(void) {
@@ -1263,5 +1266,6 @@ void VM::run(void) {
             finished = true;
         }
     }
+    DBG_INFO(("Finished.\n"));
     return;
 }
