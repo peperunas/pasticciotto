@@ -21,10 +21,7 @@ private:
 
     void encryptOpcodes(uint8_t *key);
 
-    bool dstRegCheck(uint8_t reg);
-
-    bool srcDstRegCheck(uint8_t dst, uint8_t src);
-
+    bool isRegValid(uint8_t reg);
 
     /*
     DBG UTILS
