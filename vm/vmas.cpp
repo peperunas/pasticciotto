@@ -25,6 +25,19 @@ VMAddrSpace::VMAddrSpace(uint32_t ss, uint32_t cs, uint32_t ds) {
     return;
 }
 
+VMAddrSpace::~VMAddrSpace() {
+    if (stack) {
+        delete stack;
+    }
+    if (code) {
+        delete code;
+    }
+    if (data) {
+        delete data;
+    }
+    return;
+}
+
 bool VMAddrSpace::allocate(void) {
     DBG_INFO(("Allocating sections...\n"));
 

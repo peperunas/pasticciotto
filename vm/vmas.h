@@ -16,6 +16,8 @@ public:
 
     VMAddrSpace(uint32_t ss, uint32_t cs, uint32_t ds);
 
+    ~VMAddrSpace();
+
     uint8_t *stack, *code, *data;
 
     bool allocate(void);
