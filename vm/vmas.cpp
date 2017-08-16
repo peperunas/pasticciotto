@@ -46,7 +46,7 @@ bool VMAddrSpace::allocate(void) {
         return false;
     }
 
-    memset(code, 0xff, codesize); // auto halt in case the assembly is not correct
+    memset(code, 0x0, codesize);
     memset(stack, 0x0, stacksize);
     memset(data, 0x0, datasize);
     DBG_SUCC(("Done!\n"));
