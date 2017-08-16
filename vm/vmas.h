@@ -11,6 +11,12 @@
 class VMAddrSpace {
 private:
     uint32_t stacksize, codesize, datasize;
+public:
+    uint32_t getStacksize() const;
+
+    uint32_t getCodesize() const;
+
+    uint32_t getDatasize() const;
 
 public:
     VMAddrSpace();
@@ -30,15 +36,22 @@ public:
     bool insData(uint8_t *buf, uint32_t size);
 
     template <typename src_t, typename dst_t>
-    bool getArgs(uint32_t idx, src_t * src, dst_t * dst) {
-        // both regs
+
+    bool getArgs(uint32_t idx, src_t * src, dst_t * dst, uint8_t flag_byte_op = 0) {
         if (sizeof(*src) == sizeof(*dst)) {
             if (idx + 1 >= codesize) {
                 DBG_ERROR(("Argument out of code segment bounds.\n"));
                 return false;
             }
-            *dst = code[idx + 1] >> 4;
-            *src = code[idx + 1] & 0b00001111;
+            if (!flag_byte_op) {
+                // both regs
+                *dst = code[idx + 1] >> 4;
+                *src = code[idx + 1] & 0b00001111;
+            }
+            else {
+                *dst = code[idx + 1];
+                *src = code[idx + 1 + sizeof(*dst)];
+            }
         }
         else {
             /*

@@ -100,3 +100,15 @@ bool VMAddrSpace::insData(uint8_t *buf, uint32_t size) {
     }
     return true;
 }
+
+uint32_t VMAddrSpace::getStacksize() const {
+    return stacksize;
+}
+
+uint32_t VMAddrSpace::getCodesize() const {
+    return codesize;
+}
+
+uint32_t VMAddrSpace::getDatasize() const {
+    return datasize;
+}

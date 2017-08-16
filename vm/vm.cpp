@@ -1,5 +1,4 @@
 #include "vm.h"
-#include "debug.h"
 #include "opcodes.h"
 #include <string.h>
 
@@ -150,14 +149,15 @@ bool VM::execMOVI(void) {
     MOVI R0, 0x2400 | R0 = 0x2400
     */
     uint8_t dst;
-    uint16_t imm;
-    dst = as.code[regs[IP] + 1];
-    imm = *((uint16_t *) &as.code[regs[IP] + 2]);
-    DBG_INFO(("MOVI %s, 0x%x\n", getRegName(dst), imm));
+    uint16_t src;
+    if (!as.getArgs(regs[IP], &src, &dst)) {
+        return false;
+    }
+    DBG_INFO(("MOVI %s, 0x%x\n", getRegName(dst), src));
     if (!isRegValid(dst)) {
         return false;
     }
-    regs[dst] = imm;
+    regs[dst] = src;
     return true;
 }
 
@@ -168,8 +168,9 @@ bool VM::execMOVR(void) {
     R1, R0 = 0x10 <- DST / SRC are nibbles!
     */
     uint8_t dst, src;
-    dst = as.code[regs[IP] + 1] >> 4;
-    src = as.code[regs[IP] + 1] & 0b00001111;
+    if (!as.getArgs(regs[IP], &src, &dst)) {
+        return false;
+    }
     DBG_INFO(("MOVR %s, %s\n", getRegName(dst), getRegName(src)));
     if (!isRegValid(src) || !isRegValid(dst)) {
         return false;
@@ -184,8 +185,9 @@ bool VM::execLODI(void) {
     */
     uint8_t dst;
     uint16_t src;
-    dst = as.code[regs[IP] + 1];
-    src = *((uint16_t *) &as.code[regs[IP] + 2]);
+    if (!as.getArgs(regs[IP], &src, &dst)) {
+        return false;
+    }
     DBG_INFO(("LODI %s, 0x%x\n", getRegName(dst), src));
     if (!isRegValid(dst)) {
         return false;
@@ -198,10 +200,11 @@ bool VM::execLODR(void) {
     /*
     LODR R1, R0 -> R1 = data[R0]
     */
-    uint16_t dst;
+    uint8_t dst;
     uint8_t src;
-    dst = as.code[regs[IP] + 1] >> 4;
-    src = as.code[regs[IP] + 1] & 0b00001111;
+    if (!as.getArgs(regs[IP], &src, &dst)) {
+        return false;
+    }
     DBG_INFO(("LODR %s, %s\n", getRegName(dst), getRegName(src)));
     if (!isRegValid(src) || !isRegValid(dst)) {
         return false;
@@ -216,8 +219,9 @@ bool VM::execSTRI(void) {
     */
     uint16_t dst;
     uint8_t src;
-    dst = *((uint16_t *) &as.code[regs[IP] + 1]);
-    src = as.code[regs[IP] + 3];
+    if (!as.getArgs(regs[IP], &src, &dst)) {
+        return false;
+    }
     DBG_INFO(("STRI 0x%x, %s\n", dst, getRegName(src)));
     if (!isRegValid(dst)) {
         return false;
@@ -230,11 +234,11 @@ bool VM::execSTRR(void) {
     /*
     STRR R1, R0 -> data[R1] = R0
     */
-    uint8_t dst;
-    uint8_t src;
+    uint8_t dst, src;
 
-    dst = as.code[regs[IP] + 1] >> 4;
-    src = as.code[regs[IP] + 1] & 0b00001111;
+    if (!as.getArgs(regs[IP], &src, &dst)) {
+        return false;
+    }
     DBG_INFO(("STRR %s, %s\n", getRegName(dst), getRegName(src)));
     if (!isRegValid(src) || !isRegValid(dst)) {
         return false;
@@ -250,8 +254,9 @@ bool VM::execADDI(void) {
     uint8_t dst;
     uint16_t src;
 
-    dst = as.code[regs[IP] + 1];
-    src = *((uint16_t *) &as.code[regs[IP] + 2]);
+    if (!as.getArgs(regs[IP], &src, &dst)) {
+        return false;
+    }
     DBG_INFO(("ADDI %s, 0x%x\n", getRegName(dst), src));
     if (!isRegValid(dst)) {
         return false;
@@ -264,11 +269,11 @@ bool VM::execADDR(void) {
     /*
     ADDR R0, R1 -> R0 += R1
     */
-    uint8_t dst;
-    uint8_t src;
+    uint8_t dst, src;
 
-    dst = as.code[regs[IP] + 1] >> 4;
-    src = as.code[regs[IP] + 1] & 0b00001111;
+    if (!as.getArgs(regs[IP], &src, &dst)) {
+        return false;
+    }
     DBG_INFO(("ADDR %s, %s\n", getRegName(dst), getRegName(src)));
     if (!isRegValid(src) || !isRegValid(dst)) {
         return false;
@@ -284,8 +289,9 @@ bool VM::execSUBI(void) {
     uint8_t dst;
     uint16_t src;
 
-    dst = as.code[regs[IP] + 1];
-    src = *((uint16_t *) &as.code[regs[IP] + 2]);
+    if (!as.getArgs(regs[IP], &src, &dst)) {
+        return false;
+    }
     DBG_INFO(("SUBI %s, 0x%x\n", getRegName(dst), src));
     if (!isRegValid(dst)) {
         return false;
@@ -298,11 +304,11 @@ bool VM::execSUBR(void) {
     /*
     SUBR R0, R1 -> R0 -= R1
     */
-    uint8_t dst;
-    uint8_t src;
+    uint8_t dst, src;
 
-    dst = as.code[regs[IP] + 1] >> 4;
-    src = as.code[regs[IP] + 1] & 0b00001111;
+    if (!as.getArgs(regs[IP], &src, &dst)) {
+        return false;
+    }
     DBG_INFO(("SUBR %s, %s\n", getRegName(dst), getRegName(src)));
     if (!isRegValid(src) || !isRegValid(dst)) {
         return false;
@@ -315,11 +321,11 @@ bool VM::execANDB(void) {
     /*
     ANDB R0, 0x2 -> R0 &= 0x02 or R0 &= [BYTE] 0x02 (low byte)
     */
-    uint8_t dst;
-    uint8_t src;
+    uint8_t dst, src;
 
-    dst = as.code[regs[IP] + 1];
-    src = as.code[regs[IP] + 2];
+    if (!as.getArgs(regs[IP], &src, &dst, 1)) {
+        return false;
+    }
     DBG_INFO(("ANDB %s, 0x%x\n", getRegName(dst), src));
     if (!isRegValid(dst)) {
         return false;
@@ -335,8 +341,9 @@ bool VM::execANDW(void) {
     uint8_t dst;
     uint16_t src;
 
-    dst = as.code[regs[IP] + 1];
-    src = *((uint16_t *) &as.code[regs[IP] + 2]);
+    if (!as.getArgs(regs[IP], &src, &dst)) {
+        return false;
+    }
     DBG_INFO(("XORW %s, 0x%x\n", getRegName(dst), src));
     if (!isRegValid(dst)) {
         return false;
@@ -349,11 +356,11 @@ bool VM::execANDR(void) {
     /*
     ANDR R0, R1 -> R0 ^= R1
     */
-    uint8_t dst;
-    uint8_t src;
+    uint8_t dst, src;
 
-    dst = as.code[regs[IP] + 1] >> 4;
-    src = as.code[regs[IP] + 1] & 0b00001111;
+    if (!as.getArgs(regs[IP], &src, &dst)) {
+        return false;
+    }
     DBG_INFO(("ANDR %s, %s\n", getRegName(dst), getRegName(src)));
     if (!isRegValid(src) || !isRegValid(dst)) {
         return false;
@@ -366,11 +373,11 @@ bool VM::execYORB(void) {
     /*
     YORB R0, 0x2 -> R0 |= 0x02 or R0 |= [BYTE] 0x02 (low byte)
     */
-    uint8_t dst;
-    uint8_t src;
+    uint8_t dst, src;
 
-    dst = as.code[regs[IP] + 1];
-    src = as.code[regs[IP] + 2];
+    if (!as.getArgs(regs[IP], &src, &dst, 1)) {
+        return false;
+    }
     DBG_INFO(("YORB %s, 0x%x\n", getRegName(dst), src));
     if (!isRegValid(dst)) {
         return false;
@@ -386,8 +393,9 @@ bool VM::execYORW(void) {
     uint8_t dst;
     uint16_t src;
 
-    dst = as.code[regs[IP] + 1];
-    src = *((uint16_t *) &as.code[regs[IP] + 2]);
+    if (!as.getArgs(regs[IP], &src, &dst)) {
+        return false;
+    }
     DBG_INFO(("XORW %s, 0x%x\n", getRegName(dst), src));
     if (!isRegValid(dst)) {
         return false;
@@ -403,8 +411,9 @@ bool VM::execYORR(void) {
     uint8_t dst;
     uint8_t src;
 
-    dst = as.code[regs[IP] + 1] >> 4;
-    src = as.code[regs[IP] + 1] & 0b00001111;
+    if (!as.getArgs(regs[IP], &src, &dst)) {
+        return false;
+    }
     DBG_INFO(("XORR %s, %s\n", getRegName(dst), getRegName(src)));
     if (!isRegValid(src) || !isRegValid(dst)) {
         return false;
@@ -417,11 +426,11 @@ bool VM::execXORB(void) {
     /*
     XORB R0, 0x2 -> R0 ^= 0x02 or R0 ^= [BYTE] 0x02 (low byte)
     */
-    uint8_t dst;
-    uint8_t src;
+    uint8_t dst, src;
 
-    dst = as.code[regs[IP] + 1];
-    src = as.code[regs[IP] + 2];
+    if (!as.getArgs(regs[IP], &src, &dst, 1)) {
+        return false;
+    }
     DBG_INFO(("XORB %s, 0x%x\n", getRegName(dst), src));
     if (!isRegValid(dst)) {
         return false;
@@ -437,8 +446,9 @@ bool VM::execXORW(void) {
     uint8_t dst;
     uint16_t src;
 
-    dst = as.code[regs[IP] + 1];
-    src = *((uint16_t *) &as.code[regs[IP] + 2]);
+    if (!as.getArgs(regs[IP], &src, &dst)) {
+        return false;
+    }
     DBG_INFO(("XORW %s, 0x%x\n", getRegName(dst), src));
     if (!isRegValid(dst)) {
         return false;
@@ -451,11 +461,11 @@ bool VM::execXORR(void) {
     /*
     XORR R0, R1 -> R0 ^= R1
     */
-    uint8_t dst;
-    uint8_t src;
+    uint8_t dst, src;
 
-    dst = as.code[regs[IP] + 1] >> 4;
-    src = as.code[regs[IP] + 1] & 0b00001111;
+    if (!as.getArgs(regs[IP], &src, &dst)) {
+        return false;
+    }
     DBG_INFO(("XORR %s, %s\n", getRegName(dst), getRegName(src)));
     if (!isRegValid(src) || !isRegValid(dst)) {
         return false;
@@ -468,11 +478,11 @@ bool VM::execNOTR(void) {
     /*
     NOTR R0, R1 -> R0 = ~R1
     */
-    uint8_t dst;
-    uint8_t src;
+    uint8_t dst, src;
 
-    dst = as.code[regs[IP] + 1] >> 4;
-    src = as.code[regs[IP] + 1] & 0b00001111;
+    if (!as.getArgs(regs[IP], &src, &dst)) {
+        return false;
+    }
     DBG_INFO(("NOTR %s, %s\n", getRegName(dst), getRegName(src)));
     if (!isRegValid(src) || !isRegValid(dst)) {
         return false;
@@ -488,8 +498,9 @@ bool VM::execMULI(void) {
     uint8_t dst;
     uint16_t src;
 
-    dst = as.code[regs[IP] + 1];
-    src = *((uint16_t *) &as.code[regs[IP] + 2]);
+    if (!as.getArgs(regs[IP], &src, &dst)) {
+        return false;
+    }
     DBG_INFO(("SUBI %s, 0x%x\n", getRegName(dst), src));
     if (!isRegValid(dst)) {
         return false;
@@ -502,11 +513,11 @@ bool VM::execMULR(void) {
     /*
     MULR R0, R1 -> R0 *= R1
     */
-    uint8_t dst;
-    uint8_t src;
+    uint8_t dst, src;
 
-    dst = as.code[regs[IP] + 1] >> 4;
-    src = as.code[regs[IP] + 1] & 0b00001111;
+    if (!as.getArgs(regs[IP], &src, &dst)) {
+        return false;
+    }
     DBG_INFO(("MULR %s, %s\n", getRegName(dst), getRegName(src)));
     if (!isRegValid(src) || !isRegValid(dst)) {
         return false;
@@ -522,8 +533,9 @@ bool VM::execDIVI(void) {
     uint8_t dst;
     uint16_t src;
 
-    dst = as.code[regs[IP] + 1];
-    src = *((uint16_t *) &as.code[regs[IP] + 2]);
+    if (!as.getArgs(regs[IP], &src, &dst)) {
+        return false;
+    }
     DBG_INFO(("DIVI %s, 0x%x\n", getRegName(dst), src));
     if (!isRegValid(dst) || !isDivArgValid<uint16_t>(src)) {
         return false;
@@ -536,11 +548,11 @@ bool VM::execDIVR(void) {
     /*
     DIVR R0, R1 -> R0 /= R1
     */
-    uint8_t dst;
-    uint8_t src;
+    uint8_t dst, src;
 
-    dst = as.code[regs[IP] + 1] >> 4;
-    src = as.code[regs[IP] + 1] & 0b00001111;
+    if (!as.getArgs(regs[IP], &src, &dst)) {
+        return false;
+    }
     DBG_INFO(("DIVR %s, %s\n", getRegName(dst), getRegName(src)));
     if (!isRegValid(src) || !isRegValid(dst) || !isDivArgValid<uint8_t>(regs[src])) {
         return false;
@@ -556,8 +568,9 @@ bool VM::execSHLI(void) {
     uint8_t dst;
     uint16_t src;
 
-    dst = as.code[regs[IP] + 1];
-    src = *((uint16_t *) &as.code[regs[IP] + 2]);
+    if (!as.getArgs(regs[IP], &src, &dst)) {
+        return false;
+    }
     DBG_INFO(("SHLI %s, 0x%x\n", getRegName(dst), src));
     if (!isRegValid(dst)) {
         return false;
@@ -570,11 +583,11 @@ bool VM::execSHLR(void) {
     /*
     SHLR R0, R1 -> R0 << R1
     */
-    uint8_t dst;
-    uint8_t src;
+    uint8_t dst, src;
 
-    dst = as.code[regs[IP] + 1] >> 4;
-    src = as.code[regs[IP] + 1] & 0b00001111;
+    if (!as.getArgs(regs[IP], &src, &dst)) {
+        return false;
+    }
     DBG_INFO(("SHLR %s, %s\n", getRegName(dst), getRegName(src)));
     if (!isRegValid(src) || !isRegValid(dst)) {
         return false;
@@ -590,8 +603,9 @@ bool VM::execSHRI(void) {
     uint8_t dst;
     uint16_t src;
 
-    dst = as.code[regs[IP] + 1];
-    src = *((uint16_t *) &as.code[regs[IP] + 2]);
+    if (!as.getArgs(regs[IP], &src, &dst)) {
+        return false;
+    }
     DBG_INFO(("SHRI %s, 0x%x\n", getRegName(dst), src));
     if (!isRegValid(dst)) {
         return false;
@@ -604,11 +618,11 @@ bool VM::execSHRR(void) {
     /*
     SHRR R0, R1 -> R0 >> R1
     */
-    uint8_t dst;
-    uint8_t src;
+    uint8_t dst, src;
 
-    dst = as.code[regs[IP] + 1] >> 4;
-    src = as.code[regs[IP] + 1] & 0b00001111;
+    if (!as.getArgs(regs[IP], &src, &dst)) {
+        return false;
+    }
     DBG_INFO(("SHRR %s, %s\n", getRegName(dst), getRegName(src)));
     if (!isRegValid(src) || !isRegValid(dst)) {
         return false;
@@ -618,28 +632,32 @@ bool VM::execSHRR(void) {
 }
 
 bool VM::execPUSH(void) {
-    uint8_t src;
+    uint8_t reg;
 
-    src = as.code[regs[IP] + 1];
-    DBG_INFO(("PUSH %s\n", getRegName(src)));
-    if (!isRegValid(src)) {
+    if (!as.getArgs(regs[IP], &reg)) {
+        return false;
+    }
+    DBG_INFO(("PUSH %s\n", getRegName(reg)));
+    if (!isRegValid(reg)) {
         return false;
     }
     if (regs[SP] + sizeof(uint16_t) > 0xffff) {
         DBG_ERROR(("Out of bound: stack is going above 0xFFFF!\n"));
         return false;
     }
-    memcpy(&as.stack[regs[SP]], &regs[src], sizeof(uint16_t));
+    memcpy(&as.stack[regs[SP]], &regs[reg], sizeof(uint16_t));
     regs[SP] += sizeof(uint16_t);
     return true;
 }
 
 bool VM::execPOOP(void) {
-    uint8_t dst;
+    uint8_t reg;
 
-    dst = as.code[regs[IP] + 1];
-    DBG_INFO(("POOP %s\n", getRegName(dst)));
-    if (!isRegValid(dst)) {
+    if (!as.getArgs(regs[IP], &reg)) {
+        return false;
+    }
+    DBG_INFO(("POOP %s\n", getRegName(reg)));
+    if (!isRegValid(reg)) {
         return false;
     }
     if (regs[SP] - sizeof(uint16_t) < 0) {
@@ -647,7 +665,7 @@ bool VM::execPOOP(void) {
         return false;
     }
     regs[SP] -= sizeof(uint16_t);
-    memcpy(&regs[dst], &as.stack[regs[SP]], sizeof(uint16_t));
+    memcpy(&regs[reg], &as.stack[regs[SP]], sizeof(uint16_t));
     return true;
 }
 
@@ -655,21 +673,21 @@ bool VM::execCMPB(void) {
     /*
     CMPB R0, 0x2 -> Compare immediate with lower half (BYTE) register
     */
-    uint8_t reg;
-    uint8_t imm;
+    uint8_t dst, src;
 
-    reg = as.code[regs[IP] + 1];
-    imm = as.code[regs[IP] + 2];
-    DBG_INFO(("CMPB %s, 0x%x\n", getRegName(reg), imm));
-    if (!isRegValid(reg)) {
+    if (!as.getArgs(regs[IP], &src, &dst, 1)) {
         return false;
     }
-    if (*((uint8_t *) &regs[reg]) == imm) {
+    DBG_INFO(("CMPB %s, 0x%x\n", getRegName(dst), src));
+    if (!isRegValid(dst)) {
+        return false;
+    }
+    if (*((uint8_t *) &regs[dst]) == src) {
         flags.ZF = 1;
     } else {
         flags.ZF = 0;
     }
-    if (*((uint8_t *) &regs[reg]) > imm) {
+    if (*((uint8_t *) &regs[dst]) > src) {
         flags.CF = 0;
     } else {
         flags.CF = 1;
@@ -681,21 +699,22 @@ bool VM::execCMPW(void) {
     /*
     CMPW R0, 0x2 -> Compare immediate with whole (WORD) register
     */
-    uint8_t reg;
-    uint16_t imm;
+    uint8_t dst;
+    uint16_t src;
 
-    reg = as.code[regs[IP] + 1];
-    imm = *((uint16_t *) &as.code[regs[IP] + 2]);
-    DBG_INFO(("CMPW %s, 0x%x\n", getRegName(reg), imm));
-    if (!isRegValid(reg)) {
+    if (!as.getArgs(regs[IP], &src, &dst)) {
         return false;
     }
-    if (regs[reg] == imm) {
+    DBG_INFO(("CMPW %s, 0x%x\n", getRegName(dst), src));
+    if (!isRegValid(dst)) {
+        return false;
+    }
+    if (regs[dst] == src) {
         flags.ZF = 1;
     } else {
         flags.ZF = 0;
     }
-    if (regs[reg] > imm) {
+    if (regs[dst] > src) {
         flags.CF = 0;
     } else {
         flags.CF = 1;
@@ -707,21 +726,22 @@ bool VM::execCMPR(void) {
     /*
     CMPR R0, R1 -> Compares 2 registers
     */
-    uint8_t r1;
-    uint8_t r2;
+    uint8_t dst;
+    uint8_t src;
 
-    r1 = as.code[regs[IP] + 1] >> 4;
-    r2 = as.code[regs[IP] + 1] & 0b00001111;
-    DBG_INFO(("CMPR %s, %s\n", getRegName(r1), getRegName(r2)));
-    if (!isRegValid(r1) || !isRegValid(r2)) {
+    if (!as.getArgs(regs[IP], &src, &dst)) {
         return false;
     }
-    if (regs[r1] == regs[r2]) {
+    DBG_INFO(("CMPR %s, %s\n", getRegName(dst), getRegName(src)));
+    if (!isRegValid(dst) || !isRegValid(src)) {
+        return false;
+    }
+    if (regs[dst] == regs[src]) {
         flags.ZF = 1;
     } else {
         flags.ZF = 0;
     }
-    if (regs[r1] > regs[r2]) {
+    if (regs[dst] > regs[src]) {
         flags.CF = 0;
     } else {
         flags.CF = 1;
@@ -735,7 +755,9 @@ bool VM::execJMPI(void) {
     */
     uint16_t imm;
 
-    imm = *(uint16_t *) &as.code[regs[IP] + 1];
+    if (!as.getArgs(regs[IP], &imm)) {
+        return false;
+    }
     DBG_INFO(("JMPI 0x%x\n", imm));
     regs[IP] = imm;
     return true;
@@ -747,7 +769,9 @@ bool VM::execJMPR(void) {
     */
     uint8_t reg;
 
-    reg = as.code[regs[IP] + 1];
+    if (!as.getArgs(regs[IP], &reg)) {
+        return false;
+    }
     DBG_INFO(("JMPR %s = 0x%x\n", getRegName(reg), regs[reg]));
     if (!isRegValid(reg)) {
         return false;
@@ -762,7 +786,9 @@ bool VM::execJPAI(void) {
     */
     uint16_t imm;
 
-    imm = *(uint16_t *) &as.code[regs[IP] + 1];
+    if (!as.getArgs(regs[IP], &imm)) {
+        return false;
+    }
     DBG_INFO(("JPAI 0x%x\n", imm));
     if (flags.CF == 0 && flags.ZF == 0) {
         regs[IP] = imm;
@@ -778,7 +804,9 @@ bool VM::execJPAR(void) {
     */
     uint8_t reg;
 
-    reg = as.code[regs[IP] + 1];
+    if (!as.getArgs(regs[IP], &reg)) {
+        return false;
+    }
     DBG_INFO(("JPAR %s = 0x%x\n", getRegName(reg), regs[reg]));
     if (!isRegValid(reg)) {
         return false;
@@ -797,7 +825,9 @@ bool VM::execJPBI(void) {
     */
     uint16_t imm;
 
-    imm = *(uint16_t *) &as.code[regs[IP] + 1];
+    if (!as.getArgs(regs[IP], &imm)) {
+        return false;
+    }
     DBG_INFO(("JPBI 0x%x\n", imm));
     if (flags.CF == 1) {
         regs[IP] = imm;
@@ -813,7 +843,9 @@ bool VM::execJPBR(void) {
     */
     uint8_t reg;
 
-    reg = as.code[regs[IP] + 1];
+    if (!as.getArgs(regs[IP], &reg)) {
+        return false;
+    }
     DBG_INFO(("JPBR %s = 0x%x\n", getRegName(reg), regs[reg]));
     if (!isRegValid(reg)) {
         return false;
@@ -832,7 +864,9 @@ bool VM::execJPEI(void) {
     */
     uint16_t imm;
 
-    imm = *(uint16_t *) &as.code[regs[IP] + 1];
+    if (!as.getArgs(regs[IP], &imm)) {
+        return false;
+    }
     DBG_INFO(("JPEI 0x%x\n", imm));
     if (flags.ZF == 1) {
         regs[IP] = imm;
@@ -848,7 +882,9 @@ bool VM::execJPER(void) {
     */
     uint8_t reg;
 
-    reg = as.code[regs[IP] + 1];
+    if (!as.getArgs(regs[IP], &reg)) {
+        return false;
+    }
     DBG_INFO(("JPER %s = 0x%x\n", getRegName(reg), regs[reg]));
     if (!isRegValid(reg)) {
         return false;
@@ -867,7 +903,9 @@ bool VM::execJPNI(void) {
     */
     uint16_t imm;
 
-    imm = *(uint16_t *) &as.code[regs[IP] + 1];
+    if (!as.getArgs(regs[IP], &imm)) {
+        return false;
+    }
     DBG_INFO(("JPNI 0x%x\n", imm));
     if (flags.ZF == 0) {
         regs[IP] = imm;
@@ -883,7 +921,9 @@ bool VM::execJPNR(void) {
     */
     uint8_t reg;
 
-    reg = as.code[regs[IP] + 1];
+    if (!as.getArgs(regs[IP], &reg)) {
+        return false;
+    }
     DBG_INFO(("JPNR %s = 0x%x\n", getRegName(reg), regs[reg]));
     if (!isRegValid(reg)) {
         return false;
@@ -902,18 +942,28 @@ bool VM::execCALL(void) {
     */
     uint16_t dst;
 
-    dst = *((uint16_t *) &as.code[regs[IP] + 1]);
+    if (!as.getArgs(regs[IP], &dst)) {
+        return false;
+    }
     DBG_INFO(("CALL 0x%x\n", dst));
+    if (regs[SP] + sizeof(uint16_t) >= as.getStacksize()) {
+        DBG_ERROR(("Out of bound: stack is going over the stack size!\n"));
+        return false;
+    }
     *((uint16_t *) &as.stack[regs[SP]]) = regs[IP] + 3;
     regs[SP] += sizeof(uint16_t);
     regs[IP] = dst;
-    return false;
+    return true;
 }
 
 bool VM::execRETN(void) {
     /*
     RETN -> IP = RP , restores saved return IP
     */
+    if (regs[SP] - sizeof(uint16_t) < 0) {
+        DBG_ERROR(("Out of bound: stack is going below 0!\n"));
+        return false;
+    }
     regs[SP] -= sizeof(uint16_t);
     regs[RP] = *((uint16_t *) &as.stack[regs[SP]]);
     DBG_INFO(("RETN 0x%x\n", regs[RP]));
@@ -924,7 +974,7 @@ bool VM::execRETN(void) {
 bool VM::execGRMN(void) {
     uint8_t i;
     for (i = 0; i < NUM_REGS; i++) {
-        if (i != IP && i != RP) {
+        if (i != IP && i != RP && i != SP) {
             regs[i] = 0x4747;
         }
     }
@@ -1242,10 +1292,13 @@ void VM::run(void) {
                 finished = true;
             }
         } else if (opcode == OPS[CALL]) {
-            execCALL();
+            if (!execCALL()) {
+                finished = true;
+            }
         } else if (opcode == OPS[RETN]) {
-            execRETN();
-            regs[IP] = regs[RP];
+            if (!execRETN()) {
+                finished = true;
+            }
         } else if (opcode == OPS[GRMN]) {
             execGRMN();
             regs[IP] += GRMN_SIZE;
