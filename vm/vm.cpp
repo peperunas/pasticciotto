@@ -786,7 +786,8 @@ bool VM::execJPAR(void) {
         regs[IP] = reg;
         return true;
     }
-    return false;
+    regs[IP] += JPAR_SIZE;
+    return true;
 }
 
 bool VM::execJPBI(void) {
@@ -801,7 +802,8 @@ bool VM::execJPBI(void) {
         regs[IP] = imm;
         return true;
     }
-    return false;
+    regs[IP] += JPBI_SIZE;
+    return true;
 }
 
 bool VM::execJPBR(void) {
@@ -819,7 +821,8 @@ bool VM::execJPBR(void) {
         regs[IP] = reg;
         return true;
     }
-    return false;
+    regs[IP] += JPBR_SIZE;
+    return true;
 }
 
 bool VM::execJPEI(void) {
@@ -834,7 +837,8 @@ bool VM::execJPEI(void) {
         regs[IP] = imm;
         return true;
     }
-    return false;
+    regs[IP] += JPEI_SIZE;
+    return true;
 }
 
 bool VM::execJPER(void) {
@@ -852,6 +856,7 @@ bool VM::execJPER(void) {
         regs[IP] = reg;
         return true;
     }
+    regs[IP] += JPER_SIZE;
     return false;
 }
 
@@ -1194,40 +1199,44 @@ void VM::run(void) {
                 finished = true;
             }
         } else if (opcode == OPS[JMPI]) {
-            execJMPI();
+            if (!execJMPI()) {
+                finished = true;
+            }
         } else if (opcode == OPS[JMPR]) {
-            execJMPR();
+            if (!execJMPR()) {
+                finished = true;
+            }
         } else if (opcode == OPS[JPAI]) {
             if (!execJPAI()) {
-                regs[IP] += JPAI_SIZE;
+                finished = true;
             }
         } else if (opcode == OPS[JPAR]) {
             if (!execJPAR()) {
-                regs[IP] += JPAR_SIZE;
+                finished = true;
             }
         } else if (opcode == OPS[JPBI]) {
             if (!execJPBI()) {
-                regs[IP] += JPBI_SIZE;
+                finished = true;
             }
         } else if (opcode == OPS[JPBR]) {
             if (!execJPBR()) {
-                regs[IP] += JPBR_SIZE;
+                finished = true;
             }
         } else if (opcode == OPS[JPEI]) {
             if (!execJPEI()) {
-                regs[IP] += JPEI_SIZE;
+                finished = true;
             }
         } else if (opcode == OPS[JPER]) {
             if (!execJPER()) {
-                regs[IP] += JPER_SIZE;
+                finished = true;
             }
         } else if (opcode == OPS[JPNI]) {
             if (!execJPNI()) {
-                regs[IP] += JPNI_SIZE;
+                finished = true;
             }
         } else if (opcode == OPS[JPNR]) {
             if (!execJPNR()) {
-                regs[IP] += JPNR_SIZE;
+                finished = true;
             }
         } else if (opcode == OPS[CALL]) {
             execCALL();
