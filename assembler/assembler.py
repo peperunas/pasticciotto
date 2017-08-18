@@ -496,7 +496,7 @@ commentline_re = re.compile("^\ *\#.*")
 
 
 def main():
-    parser = argparse.ArgumentParser(description='Optional app description')
+    parser = argparse.ArgumentParser()
     parser.add_argument(
         'opcodes_key', help='The key used to encrypt the opcodes')
     parser.add_argument('asmfile', help='The Pasticciotto assembly file')
