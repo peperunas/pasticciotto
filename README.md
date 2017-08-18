@@ -109,6 +109,18 @@ void foo() {
 # What about the challenge?
 You can find the client and the server under the `polictf/` directory. I have also written a small writeup. Check it out!
 
+# Compiling
+
+These are the presets in the `Makefile`:
+
+1. `all` will compile the emulator and the PoliCTF server/client **WITHOUT** debug symbols. (default)
+2. `emulator` will compile only the emulator **WITHOUT** debug symbols.
+3. `polictf` will compile only the PoliCTF server/client **WITHOUT** debug symbols.
+4. `debug` will compile the emulator and the PoliCTF server/client **WITH** debug symbols.
+
+So, to get up and running it's enough to run:
+> `$ make`
+
 # Implementation details
 Check out the file [IMPLEMENTATION.MD](./IMPLEMENTATION.md) to understand how the VM works and which operations it can do! Watch out for some spoilers if you haven't completed the challenge though!
 

@@ -7,7 +7,7 @@ This is the description displayed on the challenge page:
 
 # How to deploy
 
-The challenge can be deployed by running the `create_files.sh` helper script and by running the `server.elf` behind a proxy (xinetd). The server needs to access the files in the `res/` directory.
+The challenge can be deployed by running the compiled `pasticciotto-server.elf` behind a proxy (xinetd). The server needs to access the files in the `res/` directory.
 
 # Write-up
 
