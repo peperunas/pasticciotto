@@ -175,22 +175,22 @@ TEST_CASE("VM initialization", "[VM]") {
     }
 
     // Code is intact
-    for (i = 0; i < vm_nocode.addressSpace()->getCodesize(); i++) {
+    for (i = 0; i < vm_code.addressSpace()->getCodesize(); i++) {
         if (i < test_len) {
             REQUIRE(vm_code.addressSpace()->getCode()[i] == test[i]);
         } else {
-            REQUIRE(vm_nocode.addressSpace()->getCode()[i] == 0);
+            REQUIRE(vm_code.addressSpace()->getCode()[i] == 0);
         }
     }
 
     // Data has to be empty
-    for (i = 0; i < vm_nocode.addressSpace()->getDatasize(); i++) {
-        REQUIRE(vm_nocode.addressSpace()->getData()[i] == 0);
+    for (i = 0; i < vm_code.addressSpace()->getDatasize(); i++) {
+        REQUIRE(vm_code.addressSpace()->getData()[i] == 0);
     }
 
     // Stack has to be empty
-    for (i = 0; i < vm_nocode.addressSpace()->getStacksize(); i++) {
-        REQUIRE(vm_nocode.addressSpace()->getStack()[i] == 0);
+    for (i = 0; i < vm_code.addressSpace()->getStacksize(); i++) {
+        REQUIRE(vm_code.addressSpace()->getStack()[i] == 0);
     }
 
 }
