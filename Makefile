@@ -2,7 +2,7 @@ vm-objects = vm.o vmas.o
 pctf-objects = pasticciotto_server.o pasticciotto_client.o
 CXXFLAGS = -Wall
 
-all: emulator polictf
+all: emulator polictf test
 emulator: emulator/emulator.cpp $(vm-objects)
 	$(CXX) $(CXXFLAGS) -o pasticciotto-emu.elf emulator/emulator.cpp $(vm-objects)
 polictf: $(vm-objects) $(pctf-objects)
@@ -18,6 +18,9 @@ pasticciotto_server.o: polictf/server/pasticciotto_server.cpp
 	$(CXX) $(CXXFLAGS) -c polictf/server/pasticciotto_server.cpp
 pasticciotto_client.o: polictf/client/pasticciotto_client.cpp
 	$(CXX) $(CXXFLAGS) -c polictf/client/pasticciotto_client.cpp
+test: tests/test_main.cpp $(vm-objects)
+	$(CXX) $(CXXFLAGS) -o pasticciotto-tests.elf tests/test_main.cpp $(vm-objects)
+	@./pasticciotto-tests.elf
 
 .PHONY: clean
 clean:
