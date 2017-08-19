@@ -1,5 +1,4 @@
 #include "vmas.h"
-#include "debug.h"
 #include <stdlib.h>
 #include <string.h>
 
@@ -123,4 +122,16 @@ uint32_t VMAddrSpace::getCodesize() const {
 
 uint32_t VMAddrSpace::getDatasize() const {
     return datasize;
+}
+
+uint8_t *VMAddrSpace::getStack() const {
+    return stack;
+}
+
+uint8_t *VMAddrSpace::getCode() const {
+    return code;
+}
+
+uint8_t *VMAddrSpace::getData() const {
+    return data;
 }

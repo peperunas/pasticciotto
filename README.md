@@ -94,13 +94,13 @@ void foo() {
     VM vm(key, code, codelen);
 
     // accessing the data section
-    printf("First data byte: 0x%x", VM.as.data[0]);
+    printf("First data byte: 0x%x", VM.addrSpace()->getData()[0]);
     // accessing the code section
-    printf("First code byte: 0x%x", VM.as.code[0]);    
+    printf("First code byte: 0x%x", VM.addrSpace()->getCode()[0]);    
     // accessing the stack section
-    printf("First stack byte: 0x%x", VM.as.stack[0]);
+    printf("First stack byte: 0x%x", VM.addrSpace()->getStack()[0]);
     // accessing the IP register
-    printf("The IP is: 0x%x", VM.regs[IP]);
+    printf("The IP is: 0x%x", VM.regs(IP));
     return;
 }
 ```

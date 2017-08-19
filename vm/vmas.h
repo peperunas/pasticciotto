@@ -11,12 +11,13 @@
 class VMAddrSpace {
 private:
     uint32_t stacksize, codesize, datasize;
+    uint8_t *stack, *code, *data;
 public:
-    uint32_t getStacksize() const;
+    uint8_t *getStack() const;
 
-    uint32_t getCodesize() const;
+    uint8_t *getCode() const;
 
-    uint32_t getDatasize() const;
+    uint8_t *getData() const;
 
 public:
     VMAddrSpace();
@@ -25,7 +26,11 @@ public:
 
     ~VMAddrSpace();
 
-    uint8_t *stack, *code, *data;
+    uint32_t getStacksize() const;
+
+    uint32_t getCodesize() const;
+
+    uint32_t getDatasize() const;
 
     bool allocate(void);
 
@@ -35,8 +40,8 @@ public:
 
     bool insData(uint8_t *buf, uint32_t size);
 
-    template <typename src_t, typename dst_t>
-    bool getArgs(uint32_t idx, src_t * src, dst_t * dst, uint8_t flag_byte_op = 0) {
+    template<typename src_t, typename dst_t>
+    bool getArgs(uint32_t idx, src_t *src, dst_t *dst, uint8_t flag_byte_op = 0) {
         if (sizeof(*src) == sizeof(*dst)) {
             if (idx + 1 >= codesize) {
                 DBG_ERROR(("Argument out of code segment bounds.\n"));
@@ -46,13 +51,11 @@ public:
                 // both regs
                 *dst = code[idx + 1] >> 4;
                 *src = code[idx + 1] & 0b00001111;
-            }
-            else {
+            } else {
                 *dst = code[idx + 1];
                 *src = code[idx + 1 + sizeof(*dst)];
             }
-        }
-        else {
+        } else {
             /*
              * OP DST SRC
              * DST = IP + 1
@@ -63,19 +66,19 @@ public:
                 return false;
             }
 
-            *dst = *((dst_t *)&code[idx + 1]);
-            *src = *((src_t *)&code[idx + 1 + sizeof(*dst)]);
+            *dst = *((dst_t *) &code[idx + 1]);
+            *src = *((src_t *) &code[idx + 1 + sizeof(*dst)]);
         }
         return true;
     }
 
-    template <typename T>
-    bool getArgs(uint32_t ip, T * arg) {
+    template<typename T>
+    bool getArgs(uint32_t ip, T *arg) {
         if (ip + 1 >= codesize) {
             DBG_ERROR(("Argument out of code segment bounds.\n"));
             return false;
         }
-        *arg = *((T *)&code[ip + 1]);
+        *arg = *((T *) &code[ip + 1]);
         return true;
     }
 };

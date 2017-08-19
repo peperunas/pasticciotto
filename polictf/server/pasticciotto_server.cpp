@@ -1,11 +1,6 @@
 #include "../../vm/debug.h"
 #include "../../vm/vm.h"
 #include <fstream>
-#include <iostream>
-#include <stdint.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <time.h>
 #include <unistd.h>
 
 #define OPCODES_KEYLEN 15
@@ -58,7 +53,7 @@ int main(int argc, char *argv[]) {
         exit(1);
     }
     VM vm(opcodes_key, clientcode, clientcodesize);
-    vm.as.insData(EN_DATASECTION, DATASECTIONLEN);
+    vm.addressSpace()->insData(EN_DATASECTION, DATASECTIONLEN);
     vm.run();
 
     datap = fopen("../res/decrypteddatasection.txt", "r");
@@ -72,7 +67,7 @@ int main(int argc, char *argv[]) {
 
     for (i = 0; i < DATASECTIONLEN; i++) {
         DBG_INFO(("Checking data[%d]..\n", i));
-        if (vm.as.data[i] != decdatasec[i]) {
+        if (vm.addressSpace()->getData()[i] != decdatasec[i]) {
             printf("Nope!\n");
             fflush(stdout);
             exit(1);

@@ -14,6 +14,10 @@ typedef struct flags {
 
 class VM {
 private:
+    uint16_t regs[0xb];
+    flags_t flags;
+    VMAddrSpace as;
+
     ////////////////////////
     // FUNCTIONS
     ///////////////////////
@@ -23,7 +27,7 @@ private:
 
     bool isRegValid(uint8_t reg);
 
-    template <typename T>
+    template<typename T>
     bool isDivArgValid(T arg) {
         if (arg == 0) {
             return false;
@@ -136,13 +140,13 @@ public:
 
     VM(uint8_t *key, uint8_t *code, uint32_t codesize);
 
-    uint16_t regs[0xb];
-    flags_t flags;
-    VMAddrSpace as;
-
     void status(void);
 
     void run();
+
+    VMAddrSpace *addressSpace();
+
+    uint16_t reg(uint8_t);
 };
 
 #endif

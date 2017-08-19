@@ -1,6 +1,7 @@
 #include "vm.h"
 #include "opcodes.h"
 #include <string.h>
+#include <stdexcept>
 
 void VM::encryptOpcodes(uint8_t *key) {
     uint8_t arr[256];
@@ -68,6 +69,7 @@ const char *VM::getRegName(uint8_t regvalue) {
      return "??";
     }
 #endif
+    return "";
 }
 
 void VM::status(void) {
@@ -182,7 +184,7 @@ bool VM::execLODI(void) {
         DBG_ERROR(("Out of bounds: trying to access to invalid data address.\n"));
         return false;
     }
-    regs[dst] = *((uint16_t *) &as.data[src]);
+    regs[dst] = *((uint16_t *) &as.getData()[src]);
     return true;
 }
 
@@ -203,7 +205,7 @@ bool VM::execLODR(void) {
         DBG_ERROR(("Out of bounds: trying to access to invalid data address.\n"));
         return false;
     }
-    regs[dst] = *((uint16_t *) &as.data[regs[src]]);
+    regs[dst] = *((uint16_t *) &as.getData()[regs[src]]);
     return true;
 }
 
@@ -224,7 +226,7 @@ bool VM::execSTRI(void) {
         DBG_ERROR(("Out of bounds: trying to access to invalid data address.\n"));
         return false;
     }
-    *((uint16_t *) &as.data[dst]) = regs[src];
+    *((uint16_t *) &as.getData()[dst]) = regs[src];
     return true;
 }
 
@@ -245,7 +247,7 @@ bool VM::execSTRR(void) {
         DBG_ERROR(("Out of bounds: trying to access to invalid data address.\n"));
         return false;
     }
-    *((uint16_t *) &as.data[regs[dst]]) = regs[src];
+    *((uint16_t *) &as.getData()[regs[dst]]) = regs[src];
     return true;
 }
 
@@ -647,7 +649,7 @@ bool VM::execPUSH(void) {
         DBG_ERROR(("Out of bounds: stack is going over the stack size!\n"));
         return false;
     }
-    memcpy(&as.stack[regs[SP]], &regs[reg], sizeof(uint16_t));
+    memcpy(&as.getStack()[regs[SP]], &regs[reg], sizeof(uint16_t));
     regs[SP] += sizeof(uint16_t);
     return true;
 }
@@ -667,7 +669,7 @@ bool VM::execPOOP(void) {
         return false;
     }
     regs[SP] -= sizeof(uint16_t);
-    memcpy(&regs[reg], &as.stack[regs[SP]], sizeof(uint16_t));
+    memcpy(&regs[reg], &as.getStack()[regs[SP]], sizeof(uint16_t));
     return true;
 }
 
@@ -957,7 +959,7 @@ bool VM::execCALL(void) {
         return false;
     }
     regs[RP] = regs[IP] + 1 + sizeof(dst);
-    *((uint16_t *) &as.stack[regs[SP]]) = regs[RP];
+    *((uint16_t *) &as.getStack()[regs[SP]]) = regs[RP];
     regs[SP] += sizeof(uint16_t);
     regs[IP] = dst;
     return true;
@@ -992,7 +994,7 @@ void VM::run(void) {
     bool finished = false;
     bool ret;
     while (!finished) {
-        opcode = (uint8_t) as.code[regs[IP]];
+        opcode = (uint8_t) as.getCode()[regs[IP]];
         if (opcode == OPS[MOVI]) {
             ret = execMOVI();
             if (ret) {
@@ -1321,10 +1323,22 @@ void VM::run(void) {
             }
 #endif
         else {
-            DBG_ERROR(("WAT: 0x%x\n", as.code[regs[IP]]));
+            DBG_ERROR(("WAT: 0x%x\n", as.getCode()[regs[IP]]));
             finished = true;
         }
     }
     DBG_INFO(("Finished.\n"));
     return;
+}
+
+
+VMAddrSpace *VM::addressSpace() {
+    return &as;
+}
+
+uint16_t VM::reg(uint8_t reg) {
+    if (reg < 0 || reg > NUM_REGS) {
+        throw std::invalid_argument("Invalid register");
+    }
+    return regs[reg];
 }
