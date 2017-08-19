@@ -1337,7 +1337,7 @@ VMAddrSpace *VM::addressSpace() {
 }
 
 uint16_t VM::reg(uint8_t reg) {
-    if (reg < 0 || reg > NUM_REGS) {
+    if (reg < 0 || reg >= NUM_REGS) {
         throw std::invalid_argument("Invalid register");
     }
     return regs[reg];
