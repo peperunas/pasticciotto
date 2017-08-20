@@ -12,12 +12,8 @@ class VMAddrSpace {
 private:
     uint32_t stacksize, codesize, datasize;
     uint8_t *stack, *code, *data;
-public:
-    uint8_t *getStack() const;
 
-    uint8_t *getCode() const;
-
-    uint8_t *getData() const;
+    bool allocate(void);
 
 public:
     VMAddrSpace();
@@ -26,13 +22,17 @@ public:
 
     ~VMAddrSpace();
 
-    uint32_t getStacksize() const;
+    uint8_t *getStack();
 
-    uint32_t getCodesize() const;
+    uint8_t *getCode();
 
-    uint32_t getDatasize() const;
+    uint8_t *getData();
 
-    bool allocate(void);
+    uint32_t getStacksize();
+
+    uint32_t getCodesize();
+
+    uint32_t getDatasize();
 
     bool insStack(uint8_t *buf, uint32_t size);
 

@@ -1,6 +1,7 @@
 #include "vmas.h"
 #include <stdlib.h>
 #include <string.h>
+#include <new>
 
 VMAddrSpace::VMAddrSpace() {
     stack = NULL;
@@ -49,15 +50,15 @@ bool VMAddrSpace::allocate(void) {
 
     if (code == NULL) {
         DBG_ERROR(("Couldn't allocate code section.\n"));
-        return false;
+        throw std::bad_alloc();
     }
     if (data == NULL) {
         DBG_ERROR(("Couldn't allocate data section.\n"));
-        return false;
+        throw std::bad_alloc();
     }
     if (stack == NULL) {
         DBG_ERROR(("Couldn't allocate stack section.\n"));
-        return false;
+        throw std::bad_alloc();
     }
 
     memset(code, 0x0, codesize);
@@ -112,26 +113,26 @@ bool VMAddrSpace::insData(uint8_t *buf, uint32_t size) {
     return true;
 }
 
-uint32_t VMAddrSpace::getStacksize() const {
+uint32_t VMAddrSpace::getStacksize() {
     return stacksize;
 }
 
-uint32_t VMAddrSpace::getCodesize() const {
+uint32_t VMAddrSpace::getCodesize() {
     return codesize;
 }
 
-uint32_t VMAddrSpace::getDatasize() const {
+uint32_t VMAddrSpace::getDatasize() {
     return datasize;
 }
 
-uint8_t *VMAddrSpace::getStack() const {
+uint8_t *VMAddrSpace::getStack() {
     return stack;
 }
 
-uint8_t *VMAddrSpace::getCode() const {
+uint8_t *VMAddrSpace::getCode() {
     return code;
 }
 
-uint8_t *VMAddrSpace::getData() const {
+uint8_t *VMAddrSpace::getData() {
     return data;
 }
