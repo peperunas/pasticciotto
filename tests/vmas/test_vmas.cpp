@@ -37,7 +37,8 @@ TEST_CASE("VMAddrSpace initialization", "[VMAS]") {
         REQUIRE(vmas_def.getStack()[i] == 0);
     }
 
-    vmas_def.insCode(code_test, code_len);
+    REQUIRE(vmas_def.insCode(code_test, DEFAULT_CODESIZE + 5) == false);
+    REQUIRE(vmas_def.insCode(code_test, code_len) == true);
 // Code has to match
     for (i = 0; i < DEFAULT_CODESIZE; i++) {
         if (i < code_len) {
@@ -46,8 +47,9 @@ TEST_CASE("VMAddrSpace initialization", "[VMAS]") {
             REQUIRE(vmas_def.getCode()[i] == 0);
         }
     }
-    vmas_def.insData(data_test, data_len);
-// Data has to match
+    REQUIRE(vmas_def.insData(data_test, DEFAULT_DATASIZE + 5) == false);
+    REQUIRE(vmas_def.insData(data_test, data_len) == true);
+    // Data has to match
     for (i = 0; i < DEFAULT_DATASIZE; i++) {
         if (i < data_len) {
             REQUIRE(vmas_def.getData()[i] == data_test[i]);
@@ -55,7 +57,8 @@ TEST_CASE("VMAddrSpace initialization", "[VMAS]") {
             REQUIRE(vmas_def.getData()[i] == 0);
         }
     }
-    vmas_def.insStack(stack_test, stack_len);
+    REQUIRE(vmas_def.insStack(stack_test, DEFAULT_STACKSIZE + 5) == false);
+    REQUIRE(vmas_def.insStack(stack_test, stack_len) == true);
 // Stack has to match
     for (i = 0; i < DEFAULT_STACKSIZE; i++) {
         if (i < stack_len) {
@@ -124,10 +127,6 @@ TEST_CASE("VMAddrSpace initialization", "[VMAS]") {
     }
 
 }
-
-#include "../include/catch.hpp"
-#include "../../vm/vm.h"
-#include <cstring>
 
 TEST_CASE("Getting operands from VMAddrSpace", "[VMAS]") {
     uint8_t dst8, src8;
