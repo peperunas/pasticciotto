@@ -47,7 +47,7 @@ TEST_CASE("VMAddrSpace initialization", "[VMAS]") {
         }
     }
     vmas_def.insData(data_test, data_len);
-// Code has to match
+// Data has to match
     for (i = 0; i < DEFAULT_DATASIZE; i++) {
         if (i < data_len) {
             REQUIRE(vmas_def.getData()[i] == data_test[i]);
@@ -56,7 +56,7 @@ TEST_CASE("VMAddrSpace initialization", "[VMAS]") {
         }
     }
     vmas_def.insStack(stack_test, stack_len);
-// Code has to match
+// Stack has to match
     for (i = 0; i < DEFAULT_STACKSIZE; i++) {
         if (i < stack_len) {
             REQUIRE(vmas_def.getStack()[i] == stack_test[i]);
@@ -91,7 +91,9 @@ TEST_CASE("VMAddrSpace initialization", "[VMAS]") {
         REQUIRE(vmas_cus.getStack()[i] == 0);
     }
 
-    vmas_cus.insCode(code_test, code_len);
+    // Wrong size
+    REQUIRE(vmas_cus.insCode(code_test, cs + 5) == false);
+    REQUIRE(vmas_cus.insCode(code_test, code_len) == true);
 // Code has to match
     for (i = 0; i < cs; i++) {
         if (i < code_len) {
@@ -100,8 +102,9 @@ TEST_CASE("VMAddrSpace initialization", "[VMAS]") {
             REQUIRE(vmas_cus.getCode()[i] == 0);
         }
     }
-    vmas_cus.insData(data_test, data_len);
-// Code has to match
+    REQUIRE(vmas_cus.insData(data_test, ds + 5) == false);
+    REQUIRE(vmas_cus.insData(data_test, data_len) == true);
+// Data has to match
     for (i = 0; i < ds; i++) {
         if (i < data_len) {
             REQUIRE(vmas_cus.getData()[i] == data_test[i]);
@@ -109,8 +112,9 @@ TEST_CASE("VMAddrSpace initialization", "[VMAS]") {
             REQUIRE(vmas_cus.getData()[i] == 0);
         }
     }
-    vmas_cus.insStack(stack_test, stack_len);
-// Code has to match
+    REQUIRE(vmas_cus.insStack(stack_test, ss + 5) == false);
+    REQUIRE(vmas_cus.insStack(stack_test, stack_len) == true);
+// Stack has to match
     for (i = 0; i < ss; i++) {
         if (i < stack_len) {
             REQUIRE(vmas_cus.getStack()[i] == stack_test[i]);
@@ -118,6 +122,7 @@ TEST_CASE("VMAddrSpace initialization", "[VMAS]") {
             REQUIRE(vmas_cus.getStack()[i] == 0);
         }
     }
+
 }
 
 #include "../include/catch.hpp"
