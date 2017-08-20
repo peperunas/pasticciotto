@@ -1,3 +1,6 @@
+![TravisCI]
+
+------------------
 ![Pasticciotto]
 
 # What is this?
@@ -117,6 +120,7 @@ These are the presets in the `Makefile`:
 2. `emulator` will compile only the emulator **WITHOUT** debug symbols.
 3. `polictf` will compile only the PoliCTF server/client **WITHOUT** debug symbols.
 4. `debug` will compile the emulator and the PoliCTF server/client **WITH** debug symbols.
+5. `test` will compile and run the tests in the `tests/` directory.
 
 So, to get up and running it's enough to run:
 > `$ make`
@@ -151,3 +155,4 @@ OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 DEALINGS IN THE SOFTWARE.
 ```
 [Pasticciotto]: ./res/pasticciotto.png
+[TravisCI]: https://travis-ci.org/peperunas/pasticciotto.svg?branch=master
