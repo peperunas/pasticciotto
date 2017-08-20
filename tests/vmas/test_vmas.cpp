@@ -119,3 +119,62 @@ TEST_CASE("VMAddrSpace initialization", "[VMAS]") {
         }
     }
 }
+
+#include "../include/catch.hpp"
+#include "../../vm/vm.h"
+#include <cstring>
+
+TEST_CASE("Getting operands from VMAddrSpace", "[VMAS]") {
+    uint8_t dst8, src8;
+    uint16_t dst16, src16;
+    uint8_t code_test[] = "OR OIIR ORII ORB OR OII";
+    // offset     "01234567890123456789012"
+    uint32_t code_len = strlen((const char *) code_test);
+    VMAddrSpace vmas;
+
+    vmas.insCode(code_test, code_len);
+
+    /*
+     * REGISTER TO REGISTER
+     */
+
+    vmas.getArgs(0, &src8, &dst8);
+    REQUIRE(dst8 == 0x5); // R is 0x52
+    REQUIRE(src8 == 0x2);
+
+
+    /*
+     * REGISTER TO IMMEDIATE
+     */
+
+    vmas.getArgs(3, &src8, &dst16);
+    REQUIRE(dst16 == 0x4949); // I is 0x49
+    REQUIRE(src8 == 0x52); // R is 0x52
+
+    /*
+     * IMMEDIATE TO REGISTER
+     */
+
+    vmas.getArgs(8, &src16, &dst8);
+    REQUIRE(dst8 == 0x52); // I is 0x49
+    REQUIRE(src16 == 0x4949); // R is 0x52
+
+    /*
+     * BYTE TO REGISTER
+     */
+    vmas.getArgs(13, &src8, &dst8, 1);
+    REQUIRE(dst8 == 0x52); // R is 0x52
+    REQUIRE(src8 == 0x42); // B is 0x42
+
+    /*
+     * OP ONLY
+     */
+    vmas.getArgs(17, &dst8);
+    REQUIRE(dst8 == 0x52);
+
+    vmas.getArgs(20, &dst16);
+    REQUIRE(dst16 == 0x4949);
+
+}
+
+
