@@ -1023,6 +1023,7 @@ void VM::run(void) {
             success = (this->*(instr_p->exec))();
 
             if (!success) {
+                DBG_ERROR(("%s failed.\n", instr_p->name));
                 finished = true;
             } else {
                 if (!instr_p->isJump) {
