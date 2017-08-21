@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <new>
+#include <stdexcept>
 
 VMAddrSpace::VMAddrSpace() {
     stack = NULL;
@@ -14,10 +15,16 @@ VMAddrSpace::VMAddrSpace() {
     return;
 }
 
-VMAddrSpace::VMAddrSpace(uint32_t ss, uint32_t cs, uint32_t ds) {
+VMAddrSpace::VMAddrSpace(uint32_t ss, uint16_t cs, uint16_t ds) {
     stack = NULL;
     code = NULL;
     data = NULL;
+    if (cs > MAX_CODESIZE) {
+        throw std::invalid_argument("Trying to initialize the address space with a bigger codesize.");
+    }
+    if (ds > MAX_DATASIZE) {
+        throw std::invalid_argument("Trying to initialize the address space with a bigger datasize.");
+    }
     stacksize = ss;
     codesize = cs;
     datasize = ds;

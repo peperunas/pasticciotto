@@ -7,6 +7,8 @@
 #define DEFAULT_STACKSIZE 0x100
 #define DEFAULT_CODESIZE 0x300
 #define DEFAULT_DATASIZE 0x100
+#define MAX_CODESIZE 0xFFFF
+#define MAX_DATASIZE 0xFFFF
 
 class VMAddrSpace {
 private:
@@ -18,7 +20,7 @@ private:
 public:
     VMAddrSpace();
 
-    VMAddrSpace(uint32_t ss, uint32_t cs, uint32_t ds);
+    VMAddrSpace(uint32_t ss, uint16_t cs, uint16_t ds);
 
     ~VMAddrSpace();
 
