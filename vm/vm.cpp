@@ -1,5 +1,4 @@
 #include "vm.h"
-#include "opcodes.h"
 #include <string.h>
 #include <stdexcept>
 
@@ -8,7 +7,7 @@ void VM::encryptOpcodes(uint8_t *key) {
     uint32_t i, j, tmp, keysize;
     keysize = strlen((char *) key);
 
-    DBG_INFO(("Using key: %s\n", key));
+    DBG_INFO(("Encrypting instructions using key: %s\n", key));
     /*
     RC4 KSA! :-D
     */
@@ -23,13 +22,12 @@ void VM::encryptOpcodes(uint8_t *key) {
         arr[j] = tmp;
     }
     for (i = 0; i < NUM_OPS; i++) {
-        OPS[i] = arr[i];
+        INSTR[i].value = arr[i];
     }
 #ifdef DBG
-    //#TODO ASSEGNARE I NOMI AGLI OPCODES
     DBG_INFO(("~~~~~~~~~~\nOPCODES:\n"));
     for (i = 0; i < NUM_OPS; i++) {
-      DBG_INFO(("0x%x: 0x%x\n", i, OPS[i]));
+        DBG_INFO(("%s: 0x%x\n", INSTR[i].name, INSTR[i].value));
     }
     DBG_INFO(("~~~~~~~~~~\n"));
 #endif
@@ -108,9 +106,6 @@ void VM::initVariables(void) {
     for (i = R0; i < NUM_REGS; i++) {
         this->regs[i] = 0;
     }
-    for (i = 0; i < NUM_OPS; i++) {
-        OPS[i] = i;
-    }
     return;
 }
 
@@ -129,7 +124,7 @@ bool VM::isRegValid(uint8_t reg) {
 
 
 /*
-INSTRUCTIONS IMPLEMENTATIONS
+INSTRUCTIONS IMPLEMENTATION
 */
 
 bool VM::execMOVI(void) {
@@ -989,348 +984,56 @@ bool VM::execGRMN(void) {
     return true;
 }
 
+bool VM::execSHIT(void) {
+    DBG_INFO(("SHIT\n"));
+    return false;
+}
+
+bool VM::execNOPE(void) {
+    return true;
+}
+
+bool VM::execDEBG(void) {
+    status();
+    return true;
+}
+
 void VM::run(void) {
-    uint8_t opcode;
+    uint8_t next_instr, i;
+    instruction_t *instr_p = NULL;
+    bool success;
     bool finished = false;
-    bool ret;
     while (!finished) {
-        opcode = (uint8_t) as.getCode()[regs[IP]];
-        if (opcode == OPS[MOVI]) {
-            ret = execMOVI();
-            if (ret) {
-                regs[IP] += MOVI_SIZE;
-            } else {
-                DBG_ERROR(("MOVI FAILED.\n"));
-                finished = true;
+        next_instr = (uint8_t) as.getCode()[regs[IP]];
+
+        // getting pointer to correct instruction_t
+        for (i = 0; i < NUM_OPS; i++) {
+            if (next_instr == INSTR[i].value) {
+                instr_p = &INSTR[i];
             }
-        } else if (opcode == OPS[MOVR]) {
-            ret = execMOVR();
-            if (ret) {
-                regs[IP] += MOVR_SIZE;
-            } else {
-                DBG_ERROR(("MOVR FAILED.\n"));
-                finished = true;
-            }
-        } else if (opcode == OPS[LODI]) {
-            ret = execLODI();
-            if (ret) {
-                regs[IP] += LODI_SIZE;
-            } else {
-                DBG_ERROR(("LODI FAILED.\n"));
-                finished = true;
-            }
-        } else if (opcode == OPS[LODR]) {
-            ret = execLODR();
-            if (ret) {
-                regs[IP] += LODR_SIZE;
-            } else {
-                DBG_ERROR(("LODR FAILED.\n"));
-                finished = true;
-            }
-        } else if (opcode == OPS[STRI]) {
-            ret = execSTRI();
-            if (ret) {
-                regs[IP] += STRI_SIZE;
-            } else {
-                DBG_ERROR(("MOVI FAILED.\n"));
-                finished = true;
-            }
-        } else if (opcode == OPS[STRR]) {
-            ret = execSTRR();
-            if (ret) {
-                regs[IP] += STRR_SIZE;
-            } else {
-                DBG_ERROR(("STRR FAILED.\n"));
-                finished = true;
-            }
-        } else if (opcode == OPS[ADDI]) {
-            ret = execADDI();
-            if (ret) {
-                regs[IP] += ADDI_SIZE;
-            } else {
-                DBG_ERROR(("ADDI FAILED.\n"));
-                finished = true;
-            }
-        } else if (opcode == OPS[ADDR]) {
-            ret = execADDR();
-            if (ret) {
-                regs[IP] += ADDR_SIZE;
-            } else {
-                DBG_ERROR(("ADDR FAILED.\n"));
-                finished = true;
-            }
-        } else if (opcode == OPS[SUBI]) {
-            ret = execSUBI();
-            if (ret) {
-                regs[IP] += SUBI_SIZE;
-            } else {
-                DBG_ERROR(("SUBI FAILED.\n"));
-                finished = true;
-            }
-        } else if (opcode == OPS[SUBR]) {
-            ret = execSUBR();
-            if (ret) {
-                regs[IP] += SUBR_SIZE;
-            } else {
-                DBG_ERROR(("SUBR FAILED.\n"));
-                finished = true;
-            }
-        } else if (opcode == OPS[ANDB]) {
-            ret = execANDB();
-            if (ret) {
-                regs[IP] += ANDB_SIZE;
-            } else {
-                DBG_ERROR(("ANDB FAILED.\n"));
-                finished = true;
-            }
-        } else if (opcode == OPS[ANDW]) {
-            ret = execANDW();
-            if (ret) {
-                regs[IP] += ANDW_SIZE;
-            } else {
-                DBG_ERROR(("ANDW FAILED.\n"));
-                finished = true;
-            }
-        } else if (opcode == OPS[ANDR]) {
-            ret = execANDR();
-            if (ret) {
-                regs[IP] += ANDR_SIZE;
-            } else {
-                DBG_ERROR(("ANDR FAILED.\n"));
-                finished = true;
-            }
-        } else if (opcode == OPS[YORB]) {
-            ret = execYORB();
-            if (ret) {
-                regs[IP] += YORB_SIZE;
-            } else {
-                DBG_ERROR(("YORB FAILED.\n"));
-                finished = true;
-            }
-        } else if (opcode == OPS[YORW]) {
-            ret = execYORW();
-            if (ret) {
-                regs[IP] += YORW_SIZE;
-            } else {
-                DBG_ERROR(("YORW FAILED.\n"));
-                finished = true;
-            }
-        } else if (opcode == OPS[YORR]) {
-            ret = execYORR();
-            if (ret) {
-                regs[IP] += YORR_SIZE;
-            } else {
-                DBG_ERROR(("YORR FAILED.\n"));
-                finished = true;
-            }
-        } else if (opcode == OPS[XORB]) {
-            ret = execXORB();
-            if (ret) {
-                regs[IP] += XORB_SIZE;
-            } else {
-                DBG_ERROR(("XORB FAILED.\n"));
-                finished = true;
-            }
-        } else if (opcode == OPS[XORW]) {
-            ret = execXORW();
-            if (ret) {
-                regs[IP] += XORW_SIZE;
-            } else {
-                DBG_ERROR(("XORW FAILED.\n"));
-                finished = true;
-            }
-        } else if (opcode == OPS[XORR]) {
-            ret = execXORR();
-            if (ret) {
-                regs[IP] += XORR_SIZE;
-            } else {
-                DBG_ERROR(("XORR FAILED.\n"));
-                finished = true;
-            }
-        } else if (opcode == OPS[NOTR]) {
-            ret = execNOTR();
-            if (ret) {
-                regs[IP] += NOTR_SIZE;
-            } else {
-                DBG_ERROR(("NOTR FAILED.\n"));
-                finished = true;
-            }
-        } else if (opcode == OPS[MULI]) {
-            ret = execMULI();
-            if (ret) {
-                regs[IP] += MULI_SIZE;
-            } else {
-                DBG_ERROR(("MULI FAILED.\n"));
-                finished = true;
-            }
-        } else if (opcode == OPS[MULR]) {
-            ret = execMULR();
-            if (ret) {
-                regs[IP] += MULR_SIZE;
-            } else {
-                DBG_ERROR(("MULR FAILED.\n"));
-                finished = true;
-            }
-        } else if (opcode == OPS[DIVI]) {
-            ret = execDIVI();
-            if (ret) {
-                regs[IP] += DIVI_SIZE;
-            } else {
-                DBG_ERROR(("DIVI FAILED.\n"));
-                finished = true;
-            }
-        } else if (opcode == OPS[DIVR]) {
-            ret = execDIVR();
-            if (ret) {
-                regs[IP] += DIVR_SIZE;
-            } else {
-                DBG_ERROR(("DIVR FAILED.\n"));
-                finished = true;
-            }
-        } else if (opcode == OPS[SHLI]) {
-            ret = execSHLI();
-            if (ret) {
-                regs[IP] += SHLI_SIZE;
-            } else {
-                DBG_ERROR(("SHLI FAILED.\n"));
-                finished = true;
-            }
-        } else if (opcode == OPS[SHLR]) {
-            ret = execSHLR();
-            if (ret) {
-                regs[IP] += SHLR_SIZE;
-            } else {
-                DBG_ERROR(("SHLR FAILED.\n"));
-                finished = true;
-            }
-        } else if (opcode == OPS[SHRI]) {
-            ret = execSHRI();
-            if (ret) {
-                regs[IP] += SHRI_SIZE;
-            } else {
-                DBG_ERROR(("SHRI FAILED.\n"));
-                finished = true;
-            }
-        } else if (opcode == OPS[SHRR]) {
-            ret = execSHRR();
-            if (ret) {
-                regs[IP] += SHRR_SIZE;
-            } else {
-                DBG_ERROR(("SHRR FAILED.\n"));
-                finished = true;
-            }
-        } else if (opcode == OPS[PUSH]) {
-            ret = execPUSH();
-            if (ret) {
-                regs[IP] += PUSH_SIZE;
-            } else {
-                DBG_ERROR(("PUSH FAILED.\n"));
-                finished = true;
-            }
-        } else if (opcode == OPS[POOP]) {
-            ret = execPOOP();
-            if (ret) {
-                regs[IP] += POOP_SIZE;
-            } else {
-                DBG_ERROR(("POOP FAILED.\n"));
-                finished = true;
-            }
-        } else if (opcode == OPS[CMPB]) {
-            ret = execCMPB();
-            if (ret) {
-                regs[IP] += CMPB_SIZE;
-            } else {
-                DBG_ERROR(("CMPB FAILED.\n"));
-                finished = true;
-            }
-        } else if (opcode == OPS[CMPW]) {
-            ret = execCMPW();
-            if (ret) {
-                regs[IP] += CMPW_SIZE;
-            } else {
-                DBG_ERROR(("CMPW FAILED.\n"));
-                finished = true;
-            }
-        } else if (opcode == OPS[CMPR]) {
-            ret = execCMPR();
-            if (ret) {
-                regs[IP] += CMPR_SIZE;
-            } else {
-                DBG_ERROR(("CMPR FAILED.\n"));
-                finished = true;
-            }
-        } else if (opcode == OPS[JMPI]) {
-            if (!execJMPI()) {
-                finished = true;
-            }
-        } else if (opcode == OPS[JMPR]) {
-            if (!execJMPR()) {
-                finished = true;
-            }
-        } else if (opcode == OPS[JPAI]) {
-            if (!execJPAI()) {
-                finished = true;
-            }
-        } else if (opcode == OPS[JPAR]) {
-            if (!execJPAR()) {
-                finished = true;
-            }
-        } else if (opcode == OPS[JPBI]) {
-            if (!execJPBI()) {
-                finished = true;
-            }
-        } else if (opcode == OPS[JPBR]) {
-            if (!execJPBR()) {
-                finished = true;
-            }
-        } else if (opcode == OPS[JPEI]) {
-            if (!execJPEI()) {
-                finished = true;
-            }
-        } else if (opcode == OPS[JPER]) {
-            if (!execJPER()) {
-                finished = true;
-            }
-        } else if (opcode == OPS[JPNI]) {
-            if (!execJPNI()) {
-                finished = true;
-            }
-        } else if (opcode == OPS[JPNR]) {
-            if (!execJPNR()) {
-                finished = true;
-            }
-        } else if (opcode == OPS[CALL]) {
-            if (!execCALL()) {
-                finished = true;
-            }
-        } else if (opcode == OPS[RETN]) {
-            if (!execRETN()) {
-                finished = true;
-            }
-        } else if (opcode == OPS[GRMN]) {
-            execGRMN();
-            regs[IP] += GRMN_SIZE;
-        } else if (opcode == OPS[SHIT]) {
-            DBG_INFO(("Halting.\n"));
-            finished = true;
-        } else if (opcode == OPS[NOPE]) {
-            regs[IP] += NOPE_SIZE;
         }
-#ifdef DBG
-            else if (opcode == OPS[DEBG]) {
-              status();
-              regs[IP] += DEBG_SIZE;
-            }
-#endif
-        else {
-            DBG_ERROR(("WAT: 0x%x\n", as.getCode()[regs[IP]]));
+
+        if (instr_p == NULL) {
+            DBG_ERROR(("WAT: 0x%x", next_instr));
             finished = true;
+        } else {
+            /*
+             * Eye bleeding ahead
+             */
+            success = (this->*(instr_p->exec))();
+
+            if (!success) {
+                finished = true;
+            } else {
+                if (!instr_p->isJump) {
+                    regs[IP] += instr_p->length;
+                }
+            }
         }
     }
     DBG_INFO(("Finished.\n"));
     return;
 }
-
 
 VMAddrSpace *VM::addressSpace() {
     return &as;

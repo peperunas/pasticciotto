@@ -1,8 +1,65 @@
+#ifndef INSTR_H
+#define INSTR_H
+
 /*
 MEMORY LOCATIONS AND IMMEDIATES ARE 16 BITS LONG
 */
-#ifndef DBG
-enum OPS_STARTING_VALUES {
+
+#ifdef DBG
+enum INSTR_ENUM {
+    MOVI,
+    MOVR,
+    LODI,
+    LODR,
+    STRI,
+    STRR,
+    ADDI,
+    ADDR,
+    SUBI,
+    SUBR,
+    ANDB,
+    ANDW,
+    ANDR,
+    YORB,
+    YORW,
+    YORR,
+    XORB,
+    XORW,
+    XORR,
+    NOTR,
+    MULI,
+    MULR,
+    DIVI,
+    DIVR,
+    SHLI,
+    SHLR,
+    SHRI,
+    SHRR,
+    PUSH,
+    POOP,
+    CMPB,
+    CMPW,
+    CMPR,
+    JMPI,
+    JMPR,
+    JPAI,
+    JPAR,
+    JPBI,
+    JPBR,
+    JPEI,
+    JPER,
+    JPNI,
+    JPNR,
+    CALL,
+    RETN,
+    SHIT,
+    NOPE,
+    GRMN,
+    DEBG,
+    NUM_OPS
+};
+#else
+enum INSTR_ENUM {
     MOVI,
     MOVR,
     LODI,
@@ -53,61 +110,7 @@ enum OPS_STARTING_VALUES {
     GRMN,
     NUM_OPS
 };
-#else
-enum OPS_STARTING_VALUES {
-  MOVI,
-  MOVR,
-  LODI,
-  LODR,
-  STRI,
-  STRR,
-  ADDI,
-  ADDR,
-  SUBI,
-  SUBR,
-  ANDB,
-  ANDW,
-  ANDR,
-  YORB,
-  YORW,
-  YORR,
-  XORB,
-  XORW,
-  XORR,
-  NOTR,
-  MULI,
-  MULR,
-  DIVI,
-  DIVR,
-  SHLI,
-  SHLR,
-  SHRI,
-  SHRR,
-  PUSH,
-  POOP,
-  CMPB,
-  CMPW,
-  CMPR,
-  JMPI,
-  JMPR,
-  JPAI,
-  JPAR,
-  JPBI,
-  JPBR,
-  JPEI,
-  JPER,
-  JPNI,
-  JPNR,
-  CALL,
-  RETN,
-  SHIT,
-  NOPE,
-  GRMN,
-  DEBG,
-  NUM_OPS
-};
 #endif
-uint8_t OPS[NUM_OPS];
 
 /*
 INSTRUCTION SIZE TYPES
@@ -165,8 +168,11 @@ INSTRUCTION SIZES
 #define JPER_SIZE REGONLY
 #define JPNI_SIZE IMMONLY
 #define JPNR_SIZE REGONLY
+#define CALL_SIZE IMMONLY
 #define RETN_SIZE SINGLE
 #define SHIT_SIZE SINGLE
 #define NOPE_SIZE SINGLE
 #define GRMN_SIZE SINGLE
 #define DEBG_SIZE SINGLE
+
+#endif
