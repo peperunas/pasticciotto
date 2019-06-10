@@ -122,6 +122,7 @@ You can find the client and the server under the `polictf/` directory. I have al
 ## Quick start
 
     mkdir build
+    cd build
     cmake ..
     # or, if you want debug info:
     # cmake -DPASTICCIOTTO_DEBUG=On ..
