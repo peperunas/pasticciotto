@@ -8,6 +8,7 @@ before_install:
 
 install: 
   # C++14
-  - sudo apt-get install -qq g++-6
+  - sudo apt-get install -qq g++-6 cmake
   - sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-6 90
-script: make && make clean && make debug
+
+script: mkdir build && cd build && cmake -DPASTICCIOTTO_DEBUG=On .. && make && ./bin/pasticciotto-tests
