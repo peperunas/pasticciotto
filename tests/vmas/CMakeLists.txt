@@ -1,0 +1,1 @@
+add_library(test_vmas SHARED test_vmas.cpp)

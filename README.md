@@ -115,16 +115,30 @@ You can find the client and the server under the `polictf/` directory. I have al
 
 # Compiling
 
-These are the presets in the `Makefile`:
+## Requisites
 
-1. `all` will compile the emulator and the PoliCTF server/client **WITHOUT** debug symbols. (default)
-2. `emulator` will compile only the emulator **WITHOUT** debug symbols.
-3. `polictf` will compile only the PoliCTF server/client **WITHOUT** debug symbols.
-4. `debug` will compile the emulator and the PoliCTF server/client **WITH** debug symbols.
-5. `test` will compile and run the tests in the `tests/` directory.
+1. `CMake`
 
-So, to get up and running it's enough to run:
-> `$ make`
+## Quick start
+
+    mkdir build
+    cmake ..
+    # or, if you want debug info:
+    # cmake -DPASTICCIOTTO_DEBUG=On ..
+    make
+
+## CMake targets
+
+| Target name             | Description                            |
+| ----------------------- | -------------------------------------- |
+| `pasticciotto-emulator` | Builds pasticciotto's emulator         |
+| `polictf`               | Builds PoliCTF's client and server     |
+| `polictf-client`        | Builds PoliCTF's client                |
+| `polictf-server`        | Builds PoliCTF's server                |
+| `pasticciotto-tests`    | Builds pasticciotto's test executable. |
+
+If the `PASTICCIOTTO_DEBUG` flag is passed to `cmake` during the configuration phase, the targets will be compiled with debug symbols and additional debug information.
+
 
 # Implementation details
 Check out the file [IMPLEMENTATION.MD](./IMPLEMENTATION.md) to understand how the VM works and which operations it can do! Watch out for some spoilers if you haven't completed the challenge though!

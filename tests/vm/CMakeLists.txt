@@ -1,0 +1,1 @@
+add_library(test_vm SHARED test_vm.cpp)

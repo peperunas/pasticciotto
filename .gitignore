@@ -91,3 +91,6 @@ crashlytics-build.properties
 fabric.properties
 
 .idea/
+
+build/
+cmake-build-debug/
